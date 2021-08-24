@@ -1,1 +1,2 @@
-https://dens-site.net/betabrite/betabrite.htm
+Random BetaBrite Write-up: https://dens-site.net/betabrite/betabrite.htm
+AlphaSign Communication Protocol: https://cdn2.hubspot.net/hub/160781/file-19519768-pdf/documentation/149/alpha_sign_communication_protocol_(pn_97088061).pdf
