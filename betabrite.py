@@ -16,8 +16,8 @@ import random
 from typing import Union, List
 
 # Frame Control Bytes
-WAKEUP = b"\x00\x00\x00\x00\x00\x00"
-SIGN_ADDRESS_BROADCAST = b"00"
+WAKEUP                      = b"\x00\x00\x00\x00\x00\x00"
+SIGN_ADDRESS_BROADCAST      = b"00"
 SIGN_TYPE_ALL_VERIFY        = b"!"
 
 SIGN_TYPE_SERIAL_CLOCK      = b"\""    # serial clock
@@ -56,101 +56,97 @@ SIGN_TYPE_DIRECTOR          = b"r"     # director
 SIGN_TYPE_4080C             = b"t"     # 4080c
 SIGN_TYPE_2X0C              = b"u"     # 210c and 220c
 SIGN_TYPE_ALL_CONFIG        = b"z"     # all signs
-                                    #   configure memory for 26 files (A-Z)
-                                    #   of 150 characters each, then
-                                        #   execute the command
-COMMAND_WRITE_TEXT       = b"A"        # write TEXT file
-COMMAND_READ_TEXT        = b"B"        # read TEXT file
-COMMAND_WRITE_SPECIAL    = b"E"        # write SPECIAL function
-COMMAND_READ_SPECIAL     = b"F"        # read SPECIAL function
-COMMAND_WRITE_STRING     = b"G"        # write STRING file
-COMMAND_READ_STRING      = b"H"        # read STRING file
-COMMAND_WRITE_DOTS       = b"I"        # write DOTS picture
-COMMAND_READ_DOTS        = b"J"        # read DOTS picture
-COMMAND_WRITE_ALPHA_DOTS = b"M"        # write ALPHAVISION DOTS picture
-COMMAND_READ_ALPHA_DOTS  = b"N"        # read ALPHAVISION DOTS picture
-COMMAND_ALPHA_BULLETIN   = b"O"        # write ALPHAVISION BULLETIN
 
-FILE_PRIORITY = b"0"                # Can be anything in 0x20 to 0x7E
-                                        #   Note: 0x30 ("0") is reserved for priorty
-                                        #   TEXT messages, and "0" and "?" (0x3F)
-                                        #can not be used to store STRINGS
+COMMAND_WRITE_TEXT          = b"A"     # write TEXT file
+COMMAND_READ_TEXT           = b"B"     # read TEXT file
+COMMAND_WRITE_SPECIAL       = b"E"     # write SPECIAL function
+COMMAND_READ_SPECIAL        = b"F"     # read SPECIAL function
+COMMAND_WRITE_STRING        = b"G"     # write STRING file
+COMMAND_READ_STRING         = b"H"     # read STRING file
+COMMAND_WRITE_DOTS          = b"I"     # write DOTS picture
+COMMAND_READ_DOTS           = b"J"     # read DOTS picture
+COMMAND_WRITE_ALPHA_DOTS    = b"M"     # write ALPHAVISION DOTS picture
+COMMAND_READ_ALPHA_DOTS     = b"N"     # read ALPHAVISION DOTS picture
+COMMAND_ALPHA_BULLETIN      = b"O"     # write ALPHAVISION BULLETIN
 
-PRINT2_SOH = b"]\!"                        # 2 byte printable SOH
-PRINT2_STX = b"]\""                    # 2 byte printable STX
-PRINT2_EOT = b"]$"                     # 2 byte printable EOT
+FILE_PRIORITY = b"0"                   # Can be anything in 0x20 to 0x7E
+                                       # Note: 0x30 ("0") is reserved for priority
+                                       # TEXT messages, and "0" and "?" (0x3F)
+                                       # can not be used to store STRINGS
 
-PRINT3_SOH = b"_01"                        # 3 byte printable SOH
-PRINT3_STX = b"_02"                        # 3 byte printable STX
-PRINT3_EOT = b"_04"                        # 3 byte printable EOT
+PRINT2_SOH          = b"]\!"           # 2 byte printable SOH
+PRINT2_STX          = b"]\""           # 2 byte printable STX
+PRINT2_EOT          = b"]$"            # 2 byte printable EOT
 
-CMD_WRITE_TEXT = b"A"                  # write TEXT file
-CMD_READ_TEXT  = b"B"                  # read TEXT file
+PRINT3_SOH          = b"_01"           # 3 byte printable SOH
+PRINT3_STX          = b"_02"           # 3 byte printable STX
+PRINT3_EOT          = b"_04"           # 3 byte printable EOT
+
+CMD_WRITE_TEXT      = b"A"             # write TEXT file
+CMD_READ_TEXT       = b"B"             # read TEXT file
 
 
-TEXT_POS_MIDDLE = b" "                 # center text vertically
-TEXT_POS_TOP    = b"\""                # text begins at top and at most n-1
-                                        #   lines
-TEXT_POS_BOTTOM = b"&"                 # text immediatly follows the TOP
-TEXT_POS_FILL   = b"0"                 # center text verically and use all
-                                        #   available lines
+TEXT_POS_MIDDLE     = b" "             # center text vertically
+TEXT_POS_TOP        = b"\""            # text begins at top and at most n-1 lines
+TEXT_POS_BOTTOM     = b"&"             # text immediatly follows the TOP
+TEXT_POS_FILL       = b"0"             # center text verically and use all
+                                       #   available lines
 
-MODE_ROTATE      = b"a"                # rotate right to left
-MODE_HOLD        = b"b"                # stationary
-MODE_FLASH       = b"c"                # stationary and flash
-MODE_ROLLUP      = b"e"                # push up old message by new message
-MODE_ROLLDOWN    = b"f"                # push down old message by new message
-MODE_ROLLLEFT    = b"g"                # push left old message by new message
-MODE_ROLLRIGHT   = b"h"                # push right old message by new message
-MODE_WIPEUP      = b"i"                # wipe up over old message with new
-MODE_WIPEDOWN    = b"j"                # wipe down over old message with new
-MODE_WIPELEFT    = b"k"                # wipe left over old message with new
-MODE_WIPERIGHT   = b"l"                # wipe right over old message with new
-MODE_SCROLL      = b"m"                # new message pushes the bottom line
-                                        #   to the top of a 2 line sign
-MODE_AUTO        = b"o"                # random mode selected automatically
-MODE_ROLLIN      = b"p"                # new message pushed inward
-MODE_ROLLOUT     = b"q"                # new message pushed outward
-MODE_WIPEIN      = b"r"                # new message wiped over old inward
-MODE_WIPEOUT     = b"s"                # new message wiped over old outward
-MODE_CMPRSROT    = b"t"                # rotate right to left with text
-                                        #   only half as wide
-MODE_TWINKLE     = b"n0"               # twinkle message
-MODE_SPARKLE     = b"n1"               # new message sparkles over the old
-MODE_SNOW        = b"n2"               # snow the new message
-MODE_INTERLOCK   = b"n3"               # new message interlocks over the old
-MODE_SWITCH      = b"n4"               # switch "off" the old message char by
-                                        #   char.  new message switches "on"
-                                        #   char by char
-MODE_SLIDE       = b"n5"               # slide chars right to left one at a
-                                        #   time
-MODE_SPRAY       = b"n6"               # spray message right to left
-MODE_STARBURST   = b"n7"               # explode new message
-MODE_WELCOME     = b"n8"               # display a script "Welcome"
-MODE_SLOTMACHINE = b"n9"               # display slot machine reels
-MODE_NEWSFLASH   = b"nA"               # display "Newsflash" animation
-MODE_TRUMPET     = b"nB"               # display a trumpet animation
-MODE_THANKYOU    = b"nS"               # display a script "Thank You"
-MODE_NOSMOKING   = b"nU"               # display "No Smoking" animationl
-MODE_DRINKDRIVE  = b"nV"               # display "Don't Drink and Drive"
-                                        #   animation
-MODE_ANIMAL      = b"nW"               # display a running animal
-MODE_FISH        = b"nW"               # display fish
-                                        #   (BetaBrite alternate for ANIMAL)
-MODE_FIREWORKS   = b"nX"               # display fireworks animation
-MODE_TURBOCAR    = b"nY"               # display a car animation
-MODE_BALLOONS    = b"nY"               # display a balloon animation
-                                        #   (BetaBrite alternate for TURBOCAR)
-MODE_CHERRYBOMB  = b"nZ"               # display a cherry bomb animation
+MODE_ROTATE         = b"a"             # rotate right to left
+MODE_HOLD           = b"b"             # stationary
+MODE_FLASH          = b"c"             # stationary and flash
+MODE_ROLLUP         = b"e"             # push up old message by new message
+MODE_ROLLDOWN       = b"f"             # push down old message by new message
+MODE_ROLLLEFT       = b"g"             # push left old message by new message
+MODE_ROLLRIGHT      = b"h"             # push right old message by new message
+MODE_WIPEUP         = b"i"             # wipe up over old message with new
+MODE_WIPEDOWN       = b"j"             # wipe down over old message with new
+MODE_WIPELEFT       = b"k"             # wipe left over old message with new
+MODE_WIPERIGHT      = b"l"             # wipe right over old message with new
+MODE_SCROLL         = b"m"             # new message pushes the bottom line
+                                       # to the top of a 2 line sign
+MODE_AUTO           = b"o"             # random mode selected automatically
+MODE_ROLLIN         = b"p"             # new message pushed inward
+MODE_ROLLOUT        = b"q"             # new message pushed outward
+MODE_WIPEIN         = b"r"             # new message wiped over old inward
+MODE_WIPEOUT        = b"s"             # new message wiped over old outward
+MODE_CMPRSROT       = b"t"             # rotate right to left with text
+                                       # only half as wide
+MODE_TWINKLE        = b"n0"            # twinkle message
+MODE_SPARKLE        = b"n1"            # new message sparkles over the old
+MODE_SNOW           = b"n2"            # snow the new message
+MODE_INTERLOCK      = b"n3"            # new message interlocks over the old
+MODE_SWITCH         = b"n4"            # switch "off" the old message char by
+                                       # char.  new message switches "on"
+                                       # char by char
+MODE_SLIDE          = b"n5"            # slide chars right to left one at a
+                                       # time
+MODE_SPRAY          = b"n6"            # spray message right to left
+MODE_STARBURST      = b"n7"            # explode new message
+MODE_WELCOME        = b"n8"            # display a script "Welcome"
+MODE_SLOTMACHINE    = b"n9"            # display slot machine reels
+MODE_NEWSFLASH      = b"nA"            # display "Newsflash" animation
+MODE_TRUMPET        = b"nB"            # display a trumpet animation
+MODE_THANKYOU       = b"nS"            # display a script "Thank You"
+MODE_NOSMOKING      = b"nU"            # display "No Smoking" animation
+MODE_DRINKDRIVE     = b"nV"            # display "Don't Drink and Drive" animation
+MODE_ANIMAL         = b"nW"            # display a running animal
+MODE_FISH           = b"nW"            # display fish
+                                       #   (BetaBrite alternate for ANIMAL)
+MODE_FIREWORKS      = b"nX"            # display fireworks animation
+MODE_TURBOCAR       = b"nY"            # display a car animation
+MODE_BALLOONS       = b"nY"            # display a balloon animation
+                                       #   (BetaBrite alternate for TURBOCAR)
+MODE_CHERRYBOMB     = b"nZ"            # display a cherry bomb animation
 
 
 
-BULLETIN_POS_TOP    = b"T"             # display bulletin at the top
-BULLETIN_POS_BOTTOM = b"B"             # display bulletin at the bottom
+BULLETIN_POS_TOP        = b"T"            # display bulletin at the top
+BULLETIN_POS_BOTTOM     = b"B"            # display bulletin at the bottom
 
-BULLETIN_JUST_LEFT   = b"L"            # left justify bulletin
-BULLETIN_JUST_RIGHT  = b"R"            # right justify bulletin
-BULLETIN_JUST_CENTER = b"C"            # center bulletin
+BULLETIN_JUST_LEFT      = b"L"            # left justify bulletin
+BULLETIN_JUST_RIGHT     = b"R"            # right justify bulletin
+BULLETIN_JUST_CENTER    = b"C"            # center bulletin
 
 
 
