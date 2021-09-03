@@ -54,7 +54,58 @@ COMMAND_WRITE_ALPHA_DOTS = b"M"  # write ALPHAVISION DOTS picture
 COMMAND_READ_ALPHA_DOTS = b"N"  # read ALPHAVISION DOTS picture
 COMMAND_ALPHA_BULLETIN = b"O"  # write ALPHAVISION BULLETIN
 
-FILE_PRIORITY = b"0"  # Can be anything in 0x20 to 0x7E
+''' ~-- START Write SPECIAL FUNCTION Command Codes (see 6.2.1 table 15) --~ '''
+SET_RUN_SEQUENCE = b'.'  # Specifies the run sequence for text files
+SET_RUN_TIME_TABLE = b')'  # Sets the time that a text file will run at
+SET_RUN_DAY_TABLE = b'2'  # Sets the day that a text file will run on
+SET_TIME = b" "  # Set time of day
+SET_DAY_OF_WEEK = b"&"  # Set the current day of the week
+ENABLE_SPEAKER = b"00"  # Enable sign's speaker
+DISABLE_SPEAKER = b"FF"  # Disable sign's speaker
+"""
+Sound:
+    1) NEVER use b"A" or b"B" to turn the sign's speaker on or off, as this can damage the sign (I have no idea why,
+    the protocol reference just said so). Use the above (ENABLE_SPEAKER, DISABLE_SPEAKER) instead.
+    2) Wait a minimum of 3 seconds before transmitting more data to the sign after sound generation
+    3) Note that when a tone is generated, the sign's serial port is disabled until the tone is finished, which is the
+    reasoning for the above
+    4) When sending nested frames, the tone generation command must always come last, as the serial connection is
+    temporarily disabled after the tone is generated (meaning the rest of the packet won't send)
+    
+"""
+GENERATE_SPEAKER_TONE = b"("  # Indicate speaker tone generation
+
+"""
+Modifying memory:
+    CLEAR MEMORY: just send E$ (with appropriate surroundings for packet formatting, see 6.2.1 table 15)
+    SET MEMORY: REQUIRED for writing to files besides the priority file. See 6.2.1 table 15.
+"""
+MODIFY_MEMORY = b"$"  # Modify memory, see 6.2.1 Table 15 and above for details
+''' ~-- END Write SPECIAL FUNCTION Command Codes (see 6.2.1 table 15) --~ '''
+
+
+''' ~-- START Read SPECIAL FUNCTION Command Codes (see 6.2.1 table 16) --~ '''
+READ_TIME = b" "
+READ_SPEAKER_STATUS = b"!"
+READ_GENERAL_INFORMATION = b"\""
+READ_MEMORY_POOL_SIZE = b"#"
+READ_MEMORY_CONFIGURATION = b"$"
+MEMORY_DUMP = b"%"
+READ_DAY_OF_WEEK = b"&"
+READ_TIME_FORMAT = b"'"
+READ_RUN_TIME_TABLE = b")"
+READ_SERIAL_ERROR_STATUS_REGISTER = b"*"
+NETWORK_QUERY = b"-"
+READ_RUN_SEQUENCE = b"."
+READ_RUN_DAY_TABLE = b"2"
+READ_COUNTER = b"5"
+READ_LARGE_DOTS_PICTURE_MEMORY_CONFIGURATION = b"8"
+READ_DATE = b";"
+''' ~-- END Read SPECIAL FUNCTION Command Codes (see 6.2.1 table 16) --~ '''
+
+FILE_PRIORITY = b"0"
+FILE_NORMAL_RANGE = [x.to_bytes(1, "big") for x in range(0x20, 0x7F) if x != int.from_bytes(FILE_PRIORITY, 'big')]
+# Can be anything in 0x20 to 0x7E
 # Note: 0x30 ("0") is reserved for priority
 # TEXT messages, and "0" and "?" (0x3F)
 # can not be used to store STRINGS
@@ -234,7 +285,7 @@ STRING_FILE_INSERT = b"\x10"  # insert STRING file (next char is
 #   the filename)
 WIDE_CHARS_OFF = b"\x11"  # disable wide characters
 WIDE_CHARS_ON = b"\x12"  # enables wide characters
-CURTIME_INSERT = b"\x13"  # current time
+CALL_TIME = b"\x13"
 DOTS_INSERT = b"\x14"  # insert DOTS picture (next char is
 #   the filename)
 SPEED_1 = b"\x15"  # set scroll speed to 1 (slowest)
