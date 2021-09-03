@@ -10,7 +10,10 @@ the job done, and I'll try and make it nicer over time.
 ~brewer
 """
 import time
-from typing import Union, List, Dict
+from datetime import datetime
+from enum import Enum
+from typing import Union, List, Dict, Optional
+from warnings import warn
 import random
 import serial
 # pylint: disable=wildcard-import
@@ -89,6 +92,47 @@ ANIMATION_MODE_DICT: Dict[str, bytes] = {
     'balloons': MODE_BALLOONS,
     'cherrybomb': MODE_CHERRYBOMB
 }
+
+MEMORY_MAP: Dict[bytes, int] = {}
+# Modify MEMORY_MAP as described below and specify MemoryConfiguration.CUSTOM in relevant functions for custom mapping
+'''
+Here is what a custom memory map would look look like
+
+MEMORY_MAP: Dict[bytes, int] = {
+    FILE_NORMAL_RANGE[0]: 1000, # == 1000 bytes of data allocated to the first non-priority file
+    FILE_NORMAL_RANGE[1]: 2000, # == 2000 bytes of data allocated to the first non-priority file
+    .
+    .
+    .
+}
+'''
+
+
+class MemoryConfiguration(Enum):
+    """
+    Memory configuration settings
+    ALL_FILES_EQUAL: indicates that each of the 100+ files should share an equal amount of memory
+    FIRST_FILE_MAX: lazy method, indicates that the first (non-priority) file should have all the memory
+    CUSTOM: indicates that memory allocation will be defined by some collection
+    """
+    ALL_FILES_EQUAL = 0
+    FIRST_FILE_MAX = 1
+    CUSTOM = 2
+
+
+def _memory_map_from_configuration(config: MemoryConfiguration):
+    if config == MemoryConfiguration.FIRST_FILE_MAX:
+        return {k: TOTAL_MEMORY if k == FILE_NORMAL_RANGE[0] else 0 for k in FILE_NORMAL_RANGE}
+    elif config == MemoryConfiguration.ALL_FILES_EQUAL:
+        return {k: TOTAL_MEMORY / len(FILE_NORMAL_RANGE) for k in FILE_NORMAL_RANGE}
+    elif config == MemoryConfiguration.CUSTOM:
+        if not MEMORY_MAP:
+            raise MemoryConfigurationError("MemoryConfiguration.CUSTOM specified, but MEMORY_MAP not defined")
+    else:
+        raise Exception({
+            ValueError("Inappropriate argument: 'config'"),
+            MemoryConfigurationError("Inappropriate MemoryConfiguration specified")
+        })
 
 
 class Animation:
@@ -183,6 +227,8 @@ def _transmit_multi(serial_port: str, payloads: List[bytes], addr=SIGN_ADDRESS_B
 
 def _write_file(animations: Union[List[Animation], Animation], file: bytes = FILE_PRIORITY) -> bytes:
     """Writes the given animations (which could be a single animation) in the proper payload format
+    If file is anything but FILE_PRIORITY, then memory needs to be allocated and dealt with before hand
+    Maybe I'll add a memory configuration function that assigns memory per some sort of input specification
     :param animations:
     :param file:
     :return:
@@ -201,6 +247,17 @@ def _write_file(animations: Union[List[Animation], Animation], file: bytes = FIL
     return payload
 
 
+def _configure_memory(config_mode: MemoryConfiguration = MemoryConfiguration.FIRST_FILE_MAX) -> None:
+    """
+    Handles file memory configuration (should be ran once on startup)
+    Currently only handles TEXT files, maybe I'll make a memory map object in the future
+    :param config_mode: How we should go about distributing memory
+    :return: None
+    """
+    if config_mode == MemoryConfiguration.FIRST_FILE_MAX:
+        _transmit(DEFAULT_SERIAL_PORT, MODIFY_MEMORY + FILE_NORMAL_RANGE[0] + + FILE_LOCKED)
+
+
 def _transcode(msg: str) -> bytes:
     """
     Transcodes the given msg to an appropriate bytes representation
@@ -210,6 +267,15 @@ def _transcode(msg: str) -> bytes:
     b = bytes(msg, 'utf-8')
     b = b.replace(b'\xc2\xb0', DEGREES)
     return b
+
+
+def set_time(serial_port: str = DEFAULT_SERIAL_PORT) -> None:
+    """
+    [UNTESTED]
+    Sets the time of day (in 24-hour format) in the sign, in the format HhMm
+    :return: None
+    """
+    _transmit(DEFAULT_SERIAL_PORT, COMMAND_WRITE_SPECIAL + SET_TIME + bytes(datetime.now().strftime("%H%M"), 'utf-8'))
 
 
 def send_dots(dots_data: bytes, file: bytes = FILE_PRIORITY, serial_port: str = DEFAULT_SERIAL_PORT) -> None:
@@ -231,8 +297,15 @@ def soft_reset(serial_port: str = DEFAULT_SERIAL_PORT):
 
 
 def send_animations(animations: List[Animation]):
+    """
+    Transmits the given list of animations to the betabrite sign
+    :param animations: list of animations to transmit
+    :return: None
+    """
     #   If you want to send just one animation, you can use its 'display()' method
-    _transmit(DEFAULT_SERIAL_PORT, _write_file(animations))
+    # _transmit(DEFAULT_SERIAL_PORT, _write_file(animations, file=FILE_NORMAL_RANGE[0]))
+    # To transmit to a non
+    _transmit(DEFAULT_SERIAL_PORT, _write_file(animations, file=FILE_PRIORITY))
 
 
 def _cli_parse_animations_from_string(animation_string: str) -> List[Animation]:
@@ -259,7 +332,7 @@ def _cli_parse_animations(animations: List[str]):
     return parsed_animations
 
 
-def main():
+def main() -> None:
     # pylint: disable=import-outside-toplevel
     import argparse
     parser = argparse.ArgumentParser()
@@ -274,6 +347,11 @@ def main():
     animations = _cli_parse_animations_from_string(animations)
     print(animations)
     # _transmit(DEFAULT_SERIAL_PORT, _write_file(animations))
+
+
+class MemoryConfigurationError(Exception):
+    def __init__(self, message):
+        super().__init__(message)
 
 
 if __name__ == '__main__':

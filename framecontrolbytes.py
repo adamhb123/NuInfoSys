@@ -1,7 +1,25 @@
 """Contains Frame Control Bytes used for communication with BetaBrite
 
-Currently, some of the alphanumeric characters need to be reverified
+Currently, some of the characters need to be reverified
 """
+'''
+A note on memory (from the protocol specification):
+"The sum of all the file sizes (except for SMALL DOTS PICTURE and LARGE DOTS PICTURE files) plus 11 bytes of overhead
+for each file should not exceed the total amount of available memory in the pool. A value of “0000” is a valid SIZE for
+the last file in the Memory Configuration only if this last file is a TEXT file. This assigns all remaining memory to
+the file."
+
+As a result of this, I am capping the TOTAL_MEMORY allowed to be allocated to the below value. This was calculated by
+the following formula:
+
+TRUE_MEMORY_SIZE (30000 bytes)
+- PRIORITY_FILE_SIZE(125 bytes)
+- OVERHEAD(11 bytes per file)*MAX_FILE_COUNT(65 message files)
+- CAUSE_IT_MAKES_ME_FEEL_BETTER_BYTES(4160 bytes)
+= 25000 bytes 
+'''
+TOTAL_MEMORY = 25000
+
 WAKEUP = b"\x00\x00\x00\x00\x00\x00"
 SIGN_ADDRESS_BROADCAST = b"00"  # All signs on the network should "listen" to this transmission
 SIGN_TYPE_ALL_VERIFY = b"!"
@@ -81,8 +99,13 @@ Modifying memory:
     SET MEMORY: REQUIRED for writing to files besides the priority file. See 6.2.1 table 15.
 """
 MODIFY_MEMORY = b"$"  # Modify memory, see 6.2.1 Table 15 and above for details
-''' ~-- END Write SPECIAL FUNCTION Command Codes (see 6.2.1 table 15) --~ '''
+FILE_TYPE_TEXT = b"A"
+FILE_TYPE_STRING = b"B"
+FILE_TYPE_DOTS = b"D"
+FILE_UNLOCKED = b"U"
+FILE_LOCKED = b"L"
 
+''' ~-- END Write SPECIAL FUNCTION Command Codes (see 6.2.1 table 15) --~ '''
 
 ''' ~-- START Read SPECIAL FUNCTION Command Codes (see 6.2.1 table 16) --~ '''
 READ_TIME = b" "
