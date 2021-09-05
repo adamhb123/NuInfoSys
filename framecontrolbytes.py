@@ -99,11 +99,16 @@ Modifying memory:
     SET MEMORY: REQUIRED for writing to files besides the priority file. See 6.2.1 table 15.
 """
 MODIFY_MEMORY = b"$"  # Modify memory, see 6.2.1 Table 15 and above for details
+
 FILE_TYPE_TEXT = b"A"
 FILE_TYPE_STRING = b"B"
 FILE_TYPE_DOTS = b"D"
 FILE_UNLOCKED = b"U"
 FILE_LOCKED = b"L"
+
+TEXT_FILE_START_TIME_ALLDAY = b"FD"
+TEXT_FILE_START_TIME_NEVER = b"FE"
+TEXT_FILE_START_TIME_ALWAYS = b"FF"
 
 ''' ~-- END Write SPECIAL FUNCTION Command Codes (see 6.2.1 table 15) --~ '''
 

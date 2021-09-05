@@ -15,16 +15,18 @@ from enum import Enum
 from typing import Union, List, Dict, Optional
 from warnings import warn
 import random
-import serial
+from serial import Serial
 # pylint: disable=wildcard-import
-from .framecontrolbytes import *
+from framecontrolbytes import *
+from memory import *
 
-''' 
-Configurables 
 '''
+Configurables
+'''
+CLI_ALLOW_TRANSMISSION = False
 CLI_TERMINAL_AND = "-"  # Animation separator
 CLI_ANIMATION_PROPERTY_SEPARATOR = ","  # Animation property separator
-DEFAULT_SERIAL_PORT = "/dev/serial/by-id/usb-Prolific_Technology_Inc._USB-Serial_Controller_D-if00-port0"
+SERIAL_PORT = "/dev/serial/by-id/usb-Prolific_Technology_Inc._USB-Serial_Controller_D-if00-port0"
 '''
 Nonconfigurables
 '''
@@ -93,47 +95,6 @@ ANIMATION_MODE_DICT: Dict[str, bytes] = {
     'cherrybomb': MODE_CHERRYBOMB
 }
 
-MEMORY_MAP: Dict[bytes, int] = {}
-# Modify MEMORY_MAP as described below and specify MemoryConfiguration.CUSTOM in relevant functions for custom mapping
-'''
-Here is what a custom memory map would look look like
-
-MEMORY_MAP: Dict[bytes, int] = {
-    FILE_NORMAL_RANGE[0]: 1000, # == 1000 bytes of data allocated to the first non-priority file
-    FILE_NORMAL_RANGE[1]: 2000, # == 2000 bytes of data allocated to the first non-priority file
-    .
-    .
-    .
-}
-'''
-
-
-class MemoryConfiguration(Enum):
-    """
-    Memory configuration settings
-    ALL_FILES_EQUAL: indicates that each of the 100+ files should share an equal amount of memory
-    FIRST_FILE_MAX: lazy method, indicates that the first (non-priority) file should have all the memory
-    CUSTOM: indicates that memory allocation will be defined by some collection
-    """
-    ALL_FILES_EQUAL = 0
-    FIRST_FILE_MAX = 1
-    CUSTOM = 2
-
-
-def _memory_map_from_configuration(config: MemoryConfiguration):
-    if config == MemoryConfiguration.FIRST_FILE_MAX:
-        return {k: TOTAL_MEMORY if k == FILE_NORMAL_RANGE[0] else 0 for k in FILE_NORMAL_RANGE}
-    elif config == MemoryConfiguration.ALL_FILES_EQUAL:
-        return {k: TOTAL_MEMORY / len(FILE_NORMAL_RANGE) for k in FILE_NORMAL_RANGE}
-    elif config == MemoryConfiguration.CUSTOM:
-        if not MEMORY_MAP:
-            raise MemoryConfigurationError("MemoryConfiguration.CUSTOM specified, but MEMORY_MAP not defined")
-    else:
-        raise Exception({
-            ValueError("Inappropriate argument: 'config'"),
-            MemoryConfigurationError("Inappropriate MemoryConfiguration specified")
-        })
-
 
 class Animation:
     """
@@ -176,34 +137,32 @@ class Animation:
         self.position = random.choice(list(ANIMATION_POS_DICT.values()))
 
     def display(self):
-        _transmit(DEFAULT_SERIAL_PORT, _write_file(self))
+        _transmit(_write_file(self))
 
     def bytestr(self):
         return SOM + self.position + self.mode + self.color + _transcode(self.text)
 
 
-def _transmit(serial_port: str, payload: bytes, addr=SIGN_ADDRESS_BROADCAST,
-              ttype=SIGN_TYPE_ALL_VERIFY) -> None:
+def _transmit(payload: bytes, addr=SIGN_ADDRESS_BROADCAST,
+              ttype=SIGN_TYPE_ALL_VERIFY, port: str=SERIAL_PORT) -> None:
     """
     Transmits a single packet
-    :param serial_port: sign port
     :param payload: packet Command Code + Data Field to transmit
     :param addr: packet Sign Address - the address of the sign. See the protocol write-up summary for more details.
     :param ttype: packet Type Code - describes the type of sign we're communicating to
     :return: None
     """
     packet = WAKEUP + SOH + ttype + addr + STX + payload + EOT
-    ser = serial.Serial(serial_port, 9600, timeout=10)
+    ser = Serial(port, 9600, timeout=10)
     ser.write(packet)
     ser.close()
 
 
-def _transmit_multi(serial_port: str, payloads: List[bytes], addr=SIGN_ADDRESS_BROADCAST,
+def _transmit_multi(payloads: List[bytes], addr=SIGN_ADDRESS_BROADCAST,
                     ttype=SIGN_TYPE_ALL_VERIFY) -> None:
     """
     [UNTESTED]
     Transmits multiple packets (in nested packet format, as per 5.1.3 in the specification)
-    :param serial_port: sign port
     :param payloads: packet Command Code + Data Field to transmit, as a list, where each item is the combined bytestring
     of each Command Code and Data Field pair
     :param addr: packet Sign Address - the address of the sign. See the protocol write-up summary for more details.
@@ -212,7 +171,7 @@ def _transmit_multi(serial_port: str, payloads: List[bytes], addr=SIGN_ADDRESS_B
     """
     # This would be a cool one liner to form the packet BUT we need to have 100ms delays after <STX>'s
     # packet = WAKEUP + SOH + ttype + addr + STX + (ETX+STX).join(payloads) + ETX + EOT
-    ser = serial.Serial(serial_port, 9600, timeout=10)
+    ser = Serial(SERIAL_PORT, 9600, timeout=10)
     # Initial wakeup
     ser.write(WAKEUP + SOH + ttype + addr)
     for payload in payloads:
@@ -247,17 +206,6 @@ def _write_file(animations: Union[List[Animation], Animation], file: bytes = FIL
     return payload
 
 
-def _configure_memory(config_mode: MemoryConfiguration = MemoryConfiguration.FIRST_FILE_MAX) -> None:
-    """
-    Handles file memory configuration (should be ran once on startup)
-    Currently only handles TEXT files, maybe I'll make a memory map object in the future
-    :param config_mode: How we should go about distributing memory
-    :return: None
-    """
-    if config_mode == MemoryConfiguration.FIRST_FILE_MAX:
-        _transmit(DEFAULT_SERIAL_PORT, MODIFY_MEMORY + FILE_NORMAL_RANGE[0] + + FILE_LOCKED)
-
-
 def _transcode(msg: str) -> bytes:
     """
     Transcodes the given msg to an appropriate bytes representation
@@ -269,16 +217,16 @@ def _transcode(msg: str) -> bytes:
     return b
 
 
-def set_time(serial_port: str = DEFAULT_SERIAL_PORT) -> None:
+def set_time(serial_port: str = SERIAL_PORT) -> None:
     """
     [UNTESTED]
     Sets the time of day (in 24-hour format) in the sign, in the format HhMm
     :return: None
     """
-    _transmit(DEFAULT_SERIAL_PORT, COMMAND_WRITE_SPECIAL + SET_TIME + bytes(datetime.now().strftime("%H%M"), 'utf-8'))
+    _transmit(COMMAND_WRITE_SPECIAL + SET_TIME + bytes(datetime.now().strftime("%H%M"), 'utf-8'))
 
 
-def send_dots(dots_data: bytes, file: bytes = FILE_PRIORITY, serial_port: str = DEFAULT_SERIAL_PORT) -> None:
+def send_dots(dots_data: bytes, file: bytes = FILE_PRIORITY, serial_port: str = SERIAL_PORT) -> None:
     """
     [UNTESTED]
     Sends a SMALL DOTS PICTURE file to the sign, as per 6.4.1 in the specification
@@ -289,11 +237,11 @@ def send_dots(dots_data: bytes, file: bytes = FILE_PRIORITY, serial_port: str = 
     :param serial_port: port to transmit data to
     :return: None
     """
-    _transmit(serial_port, COMMAND_WRITE_DOTS + file + dots_data)
+    _transmit(COMMAND_WRITE_DOTS + file + dots_data)
 
 
-def soft_reset(serial_port: str = DEFAULT_SERIAL_PORT):
-    _transmit(serial_port, COMMAND_WRITE_SPECIAL + b"\x2c")
+def soft_reset(serial_port: str = SERIAL_PORT):
+    _transmit(COMMAND_WRITE_SPECIAL + b"\x2c")
 
 
 def send_animations(animations: List[Animation]):
@@ -303,9 +251,9 @@ def send_animations(animations: List[Animation]):
     :return: None
     """
     #   If you want to send just one animation, you can use its 'display()' method
-    # _transmit(DEFAULT_SERIAL_PORT, _write_file(animations, file=FILE_NORMAL_RANGE[0]))
+    # _transmit(SERIAL_PORT, _write_file(animations, file=FILE_NORMAL_RANGE[0]))
     # To transmit to a non
-    _transmit(DEFAULT_SERIAL_PORT, _write_file(animations, file=FILE_PRIORITY))
+    _transmit(_write_file(animations, file=FILE_PRIORITY))
 
 
 def _cli_parse_animations_from_string(animation_string: str) -> List[Animation]:
@@ -345,14 +293,10 @@ def main() -> None:
     # display_DOTS(None)
     animations = ' '.join(args.messages)
     animations = _cli_parse_animations_from_string(animations)
-    print(animations)
-    # _transmit(DEFAULT_SERIAL_PORT, _write_file(animations))
-
-
-class MemoryConfigurationError(Exception):
-    def __init__(self, message):
-        super().__init__(message)
-
+    if CLI_ALLOW_TRANSMISSION:
+        _transmit(_write_file(animations))
+    else:
+        print(f"Packet: {animations}")
 
 if __name__ == '__main__':
     main()
