@@ -13,7 +13,6 @@ import time
 from datetime import datetime
 from enum import Enum
 from typing import Union, List, Dict, Optional
-from warnings import warn
 import random
 from serial import Serial
 # pylint: disable=wildcard-import
@@ -291,7 +290,8 @@ def _transmit(payload: bytes, addr: SignAddress = SignAddress.SIGN_ADDRESS_BROAD
     :param ttype: packet Type Code - describes the type of sign we're communicating to
     :return: None
     """
-    packet = WAKEUP + SOH + ttype + addr + STX + payload + EOT
+    packet = (PacketCharacter.WAKEUP + PacketCharacter.SOH + ttype + addr + PacketCharacter.STX + payload +
+              PacketCharacter.EOT)
     ser = Serial(port, 9600, timeout=10)
     ser.write(packet)
     ser.close()
@@ -361,7 +361,7 @@ def _transcode(msg: str) -> bytes:
     return transcoded
 
 
-def set_time(serial_port: str = SERIAL_PORT) -> None:
+def set_time() -> None:
     """
     [UNTESTED]
     Sets the time of day (in 24-hour format) in the sign, in the format HhMm
@@ -371,7 +371,7 @@ def set_time(serial_port: str = SERIAL_PORT) -> None:
         datetime.now().strftime("%H%M"), 'utf-8'))
 
 
-def send_dots(dots_data: bytes, file: FileName = FileName.FILE_PRIORITY, serial_port: str = SERIAL_PORT) -> None:
+def send_dots(dots_data: bytes, file: FileName = FileName.FILE_PRIORITY) -> None:
     """
     [UNTESTED]
     Sends a SMALL DOTS PICTURE file to the sign, as per 6.4.1 in the specification
@@ -379,13 +379,12 @@ def send_dots(dots_data: bytes, file: FileName = FileName.FILE_PRIORITY, serial_
     2 hex bytes for height + 2 hex bytes for width + row bit pattern + carriage return
     :param file: File label to write to
     :param dots_data: DOTS data to transmit
-    :param serial_port: port to transmit data to
     :return: None
     """
     _transmit(CommandCode.COMMAND_WRITE_DOTS + file + dots_data)
 
 
-def soft_reset(serial_port: str = SERIAL_PORT):
+def soft_reset():
     _transmit(CommandCode.COMMAND_WRITE_SPECIAL + WriteSpecialFunctionsLabel.SOFT_RESET)
 
 
