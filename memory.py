@@ -3,7 +3,6 @@ from enum import Enum
 from framecontrolbytes import *
 from betabrite import _transmit
 
-
 class MemoryConfigurationType(Enum):
     """
     Memory configuration settings
@@ -34,6 +33,7 @@ class Memory:
     def __init__(self, memory_configuration: Union[
         MemoryConfigurationType, Dict[bytes, int]] = MemoryConfigurationType.FIRST_FILE_MAX):
         self.map: Dict[bytes, int] = self._memory_map_from_configuration(memory_configuration)
+        print(f"MAP CONFIGURATION: {self.map}")
 
     def __repr__(self):
         return self.__str__()
@@ -47,7 +47,7 @@ class Memory:
     @staticmethod
     def clear():
         """
-        [UNTESTED]
+        [TESTED, WORKING]
         Clears the sign memory
         """
         _transmit(COMMAND_WRITE_SPECIAL + MODIFY_MEMORY)
@@ -61,6 +61,7 @@ class Memory:
         _transmit(COMMAND_WRITE_SPECIAL + MODIFY_MEMORY + b''.join(
             [b"%s%s%s%s%s" % (k, FILE_TYPE_TEXT, FILE_LOCKED, v.to_bytes(4, 'big'), TEXT_FILE_START_TIME_ALWAYS) for
              k, v in self.map.items()]))
+
 
     @staticmethod
     def _memory_map_from_configuration(config: MemoryConfigurationType):
