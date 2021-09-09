@@ -12,74 +12,75 @@ the file."
 As a result of this, I am capping the TOTAL_MEMORY allowed to be allocated to the below value. This was calculated by
 the following formula:
 
-TRUE_MEMORY_SIZE (30000 bytes)
+TRUE_AVAILABLE_MEMORY_SIZE (30000 bytes)
 - PRIORITY_FILE_SIZE(125 bytes)
 - OVERHEAD(11 bytes per file)*MAX_FILE_COUNT(65 message files)
 - CAUSE_IT_MAKES_ME_FEEL_BETTER_BYTES(4160 bytes)
 = 25000 bytes 
 '''
 from enum import Enum
+from typing import Any
 
 
 class _GetterEnum(Enum):
-    def __get__(self, instance, owner):
+    def __get__(self, instance: Any, owner: Any) -> Any:
         return self.value
 
 
-TOTAL_MEMORY = 25000
+TOTAL_MEMORY: int = 25000
 
 
 class SignType(_GetterEnum):
-    SIGN_TYPE_ALL_VERIFY = b"!"
-    SIGN_TYPE_SERIAL_CLOCK = b"\""  # serial clock
-    SIGN_TYPE_ALPHAVISION = b"#"  # alphavision
-    SIGN_TYPE_ALPHAVISION_FULL = b"$"  # full matrix alphavision
-    SIGN_TYPE_ALPHAVISION_CHAR = b"%"  # character matrix alphavision
-    SIGN_TYPE_ALPHAVISION_LINE = b"&"  # line matrix alphavision
-    SIGN_TYPE_RESPONSE = b"0"  # sign response
-    SIGN_TYPE_ONE_LINE = b"1"  # one line signs
-    SIGN_TYPE_TWO_LINE = b"2"  # two line signs
-    SIGN_TYPE_430I = b"C"  # 430i
-    SIGN_TYPE_440I = b"D"  # 440i
-    SIGN_TYPE_460I = b"E"  # 460i
-    SIGN_TYPE_790I = b"U"  # 790i
-    SIGN_TYPE_ALL = b"Z"  # all signs
-    SIGN_TYPE_BETABRITE = b"^"  # betabrite
-    SIGN_TYPE_4120C = b"a"  # 4120c
-    SIGN_TYPE_4160C = b"b"  # 4160c
-    SIGN_TYPE_4200C = b"c"  # 4200c
-    SIGN_TYPE_4240C = b"d"  # 4240c
-    SIGN_TYPE_215 = b"e"  # 215
-    SIGN_TYPE_215C = b"f"  # 215c
-    SIGN_TYPE_4120R = b"g"  # 4120r
-    SIGN_TYPE_4160R = b"h"  # 4160r
-    SIGN_TYPE_4200R = b"i"  # 4200r
-    SIGN_TYPE_4240R = b"j"  # 4240r
-    SIGN_TYPE_300 = b"k"  # 300
-    SIGN_TYPE_7000 = b"l"  # 7000
-    SIGN_TYPE_SOLAR_96X16 = b"m"  # solar 96x16 matrix
-    SIGN_TYPE_SOLAR_128X16 = b"n"  # solar 128x16 matrix
-    SIGN_TYPE_SOLAR_160X16 = b"o"  # solar 160x16 matrix
-    SIGN_TYPE_SOLAR_192X16 = b"p"  # solar 192x16 matrix
-    SIGN_TYPE_SOLAR_PPD = b"q"  # ppd
-    SIGN_TYPE_DIRECTOR = b"r"  # director
-    SIGN_TYPE_4080C = b"t"  # 4080c
-    SIGN_TYPE_2X0C = b"u"  # 210c and 220c
-    SIGN_TYPE_ALL_CONFIG = b"z"  # all signs
+    SIGN_TYPE_ALL_VERIFY: bytes = b"!"
+    SIGN_TYPE_SERIAL_CLOCK: bytes = b"\""  # serial clock
+    SIGN_TYPE_ALPHAVISION: bytes = b"#"  # alphavision
+    SIGN_TYPE_ALPHAVISION_FULL: bytes = b"$"  # full matrix alphavision
+    SIGN_TYPE_ALPHAVISION_CHAR: bytes = b"%"  # character matrix alphavision
+    SIGN_TYPE_ALPHAVISION_LINE: bytes = b"&"  # line matrix alphavision
+    SIGN_TYPE_RESPONSE: bytes = b"0"  # sign response
+    SIGN_TYPE_ONE_LINE: bytes = b"1"  # one line signs
+    SIGN_TYPE_TWO_LINE: bytes = b"2"  # two line signs
+    SIGN_TYPE_430I: bytes = b"C"  # 430i
+    SIGN_TYPE_440I: bytes = b"D"  # 440i
+    SIGN_TYPE_460I: bytes = b"E"  # 460i
+    SIGN_TYPE_790I: bytes = b"U"  # 790i
+    SIGN_TYPE_ALL: bytes = b"Z"  # all signs
+    SIGN_TYPE_BETABRITE: bytes = b"^"  # betabrite
+    SIGN_TYPE_4120C: bytes = b"a"  # 4120c
+    SIGN_TYPE_4160C: bytes = b"b"  # 4160c
+    SIGN_TYPE_4200C: bytes = b"c"  # 4200c
+    SIGN_TYPE_4240C: bytes = b"d"  # 4240c
+    SIGN_TYPE_215: bytes = b"e"  # 215
+    SIGN_TYPE_215C: bytes = b"f"  # 215c
+    SIGN_TYPE_4120R: bytes = b"g"  # 4120r
+    SIGN_TYPE_4160R: bytes = b"h"  # 4160r
+    SIGN_TYPE_4200R: bytes = b"i"  # 4200r
+    SIGN_TYPE_4240R: bytes = b"j"  # 4240r
+    SIGN_TYPE_300: bytes = b"k"  # 300
+    SIGN_TYPE_7000: bytes = b"l"  # 7000
+    SIGN_TYPE_SOLAR_96X16: bytes = b"m"  # solar 96x16 matrix
+    SIGN_TYPE_SOLAR_128X16: bytes = b"n"  # solar 128x16 matrix
+    SIGN_TYPE_SOLAR_160X16: bytes = b"o"  # solar 160x16 matrix
+    SIGN_TYPE_SOLAR_192X16: bytes = b"p"  # solar 192x16 matrix
+    SIGN_TYPE_SOLAR_PPD: bytes = b"q"  # ppd
+    SIGN_TYPE_DIRECTOR: bytes = b"r"  # director
+    SIGN_TYPE_4080C: bytes = b"t"  # 4080c
+    SIGN_TYPE_2X0C: bytes = b"u"  # 210c and 220c
+    SIGN_TYPE_ALL_CONFIG: bytes = b"z"  # all signs
 
 
 class CommandCode(_GetterEnum):
-    COMMAND_WRITE_TEXT = b"A"  # write TEXT file
-    COMMAND_READ_TEXT = b"B"  # read TEXT file
-    COMMAND_WRITE_SPECIAL = b"E"  # write SPECIAL function
-    COMMAND_READ_SPECIAL = b"F"  # read SPECIAL function
-    COMMAND_WRITE_STRING = b"G"  # write STRING file
-    COMMAND_READ_STRING = b"H"  # read STRING file
-    COMMAND_WRITE_DOTS = b"I"  # write DOTS picture
-    COMMAND_READ_DOTS = b"J"  # read DOTS picture
-    COMMAND_WRITE_ALPHA_DOTS = b"M"  # write ALPHAVISION DOTS picture
-    COMMAND_READ_ALPHA_DOTS = b"N"  # read ALPHAVISION DOTS picture
-    COMMAND_ALPHA_BULLETIN = b"O"  # write ALPHAVISION BULLETIN
+    COMMAND_WRITE_TEXT: bytes = b"A"  # write TEXT file
+    COMMAND_READ_TEXT: bytes = b"B"  # read TEXT file
+    COMMAND_WRITE_SPECIAL: bytes = b"E"  # write SPECIAL function
+    COMMAND_READ_SPECIAL: bytes = b"F"  # read SPECIAL function
+    COMMAND_WRITE_STRING: bytes = b"G"  # write STRING file
+    COMMAND_READ_STRING: bytes = b"H"  # read STRING file
+    COMMAND_WRITE_DOTS: bytes = b"I"  # write DOTS picture
+    COMMAND_READ_DOTS: bytes = b"J"  # read DOTS picture
+    COMMAND_WRITE_ALPHA_DOTS: bytes = b"M"  # write ALPHAVISION DOTS picture
+    COMMAND_READ_ALPHA_DOTS: bytes = b"N"  # read ALPHAVISION DOTS picture
+    COMMAND_ALPHA_BULLETIN: bytes = b"O"  # write ALPHAVISION BULLETIN
 
 
 '''
@@ -107,22 +108,22 @@ class WriteSpecialFunctionsLabel(_GetterEnum):
     """
     Write special functions labels, see 6.2.1 table 15 for details
     """
-    SET_TIME_OF_DAY = b" "  # Set time of day
-    ENABLE_SIGN_SPEAKER = b"00"  # Enable sign's speaker
-    DISABLE_SIGN_SPEAKER = b"FF"  # Disable sign's speaker
-    MODIFY_MEMORY = b"$"  # Modify memory, see 6.2.1 Table 15 and 'Modifying memory' above for details
-    SET_DAY_OF_WEEK = b"&"  # Set the current day of the week
-    SET_TIME_FORMAT = b"'"
-    GENERATE_SPEAKER_TONE = b"("
-    DISPLAY_TEXT_AT_XY_POSITION = b"+"
-    SET_RUN_TIME_TABLE = b')'  # Sets the time that a text file will run at
-    SOFT_RESET = b","
-    SET_RUN_SEQUENCE = b'.'  # Specifies the run sequence for text files
-    SET_RUN_DAY_TABLE = b'2'  # Sets the day that a text file will run on
-    CLEAR_SERIAL_ERROR_STATUS_REGISTER = b"4"
-    SET_COUNTER = b"5"  # I don't believe the BetaBrite has a counter, but am including this just in case
+    SET_TIME_OF_DAY: bytes = b" "  # Set time of day
+    ENABLE_SIGN_SPEAKER: bytes = b"00"  # Enable sign's speaker
+    DISABLE_SIGN_SPEAKER: bytes = b"FF"  # Disable sign's speaker
+    MODIFY_MEMORY: bytes = b"$"  # Modify memory, see 6.2.1 Table 15 and 'Modifying memory' above for details
+    SET_DAY_OF_WEEK: bytes = b"&"  # Set the current day of the week
+    SET_TIME_FORMAT: bytes = b"'"
+    GENERATE_SPEAKER_TONE: bytes = b"("
+    DISPLAY_TEXT_AT_XY_POSITION: bytes = b"+"
+    SET_RUN_TIME_TABLE: bytes = b')'  # Sets the time that a text file will run at
+    SOFT_RESET: bytes = b","
+    SET_RUN_SEQUENCE: bytes = b'.'  # Specifies the run sequence for text files
+    SET_RUN_DAY_TABLE: bytes = b'2'  # Sets the day that a text file will run on
+    CLEAR_SERIAL_ERROR_STATUS_REGISTER: bytes = b"4"
+    SET_COUNTER: bytes = b"5"  # I don't believe the BetaBrite has a counter, but am including this just in case
     # ^ check out 6.2.1 table 15 - "Set Counter" for details
-    SET_SERIAL_ADDRESS = b"7"
+    SET_SERIAL_ADDRESS: bytes = b"7"
 
 
 class DateTime(_GetterEnum):
@@ -131,20 +132,20 @@ class DateTime(_GetterEnum):
     Contains constants used by SET_DAY_OF_WEEK, SET_RUN_DAY_TABLE,
     Contains constants returned by READ_DAY_OF_WEEK, READ_RUN_DAY_TABLE
     """
-    DAILY = b"0"
-    SUNDAY = b"1"
-    MONDAY = b"2"
-    TUESDAY = b"3"
-    WEDNESDAY = b"4"
-    THURSDAY = b"5"
-    FRIDAY = b"6"
-    SATURDAY = b"7"
-    MONDAY_THROUGH_FRIDAY = b"8"
-    WEEKENDS = b"9"
-    ALWAYS = b"A"
-    NEVER = b"B"
-    STANDARD_AM_PM_FORMAT = b"S"
-    TWENTY_FOUR_HOUR_MILITARY_TIME = b"M"
+    DAILY: bytes = b"0"
+    SUNDAY: bytes = b"1"
+    MONDAY: bytes = b"2"
+    TUESDAY: bytes = b"3"
+    WEDNESDAY: bytes = b"4"
+    THURSDAY: bytes = b"5"
+    FRIDAY: bytes = b"6"
+    SATURDAY: bytes = b"7"
+    MONDAY_THROUGH_FRIDAY: bytes = b"8"
+    WEEKENDS: bytes = b"9"
+    ALWAYS: bytes = b"A"
+    NEVER: bytes = b"B"
+    STANDARD_AM_PM_FORMAT: bytes = b"S"
+    TWENTY_FOUR_HOUR_MILITARY_TIME: bytes = b"M"
 
 
 class Speaker(_GetterEnum):
@@ -160,44 +161,48 @@ class FileType(_GetterEnum):
     Contains constants used by SET_MEMORY_CONFIGURATION
     Contains constants returned by READ_MEMORY_CONFIGURATION
     """
-    TEXT = b"A"
-    STRING = b"B"
-    DOTS = b"D"
+    TEXT: bytes = b"A"
+    STRING: bytes = b"B"
+    DOTS: bytes = b"D"
 
 
 class FileLock(_GetterEnum):
     """
     File lock indicators, used in READ & WRITE SPECIAL FUNCTION commands
     """
-    UNLOCKED = b"U"
-    LOCKED = b"L"
+    UNLOCKED: bytes = b"U"
+    LOCKED: bytes = b"L"
 
 
-TEXT_FILE_START_TIME_ALLDAY = b"FD"
-TEXT_FILE_START_TIME_NEVER = b"FE"
-TEXT_FILE_START_TIME_ALWAYS = b"FF"
+class TextFileStartTime(_GetterEnum):
+    """
+    Might change this later TODO: guh
+    """
+    TEXT_FILE_START_TIME_ALLDAY: bytes = b"FD"
+    TEXT_FILE_START_TIME_NEVER: bytes = b"FE"
+    TEXT_FILE_START_TIME_ALWAYS: bytes = b"FF"
 
 
 class ReadSpecialFunctionLabel(_GetterEnum):
-    READ_TIME = b" "
-    READ_SPEAKER_STATUS = b"!"
-    READ_GENERAL_INFORMATION = b"\""
-    READ_MEMORY_POOL_SIZE = b"#"
-    READ_MEMORY_CONFIGURATION = b"$"
-    MEMORY_DUMP = b"%"
-    READ_DAY_OF_WEEK = b"&"
-    READ_TIME_FORMAT = b"'"
-    READ_RUN_TIME_TABLE = b")"
-    READ_SERIAL_ERROR_STATUS_REGISTER = b"*"
-    NETWORK_QUERY = b"-"
-    READ_RUN_SEQUENCE = b"."
-    READ_RUN_DAY_TABLE = b"2"
-    READ_COUNTER = b"5"
+    READ_TIME: bytes = b" "
+    READ_SPEAKER_STATUS: bytes = b"!"
+    READ_GENERAL_INFORMATION: bytes = b"\""
+    READ_MEMORY_POOL_SIZE: bytes = b"#"
+    READ_MEMORY_CONFIGURATION: bytes = b"$"
+    MEMORY_DUMP: bytes = b"%"
+    READ_DAY_OF_WEEK: bytes = b"&"
+    READ_TIME_FORMAT: bytes = b"'"
+    READ_RUN_TIME_TABLE: bytes = b")"
+    READ_SERIAL_ERROR_STATUS_REGISTER: bytes = b"*"
+    NETWORK_QUERY: bytes = b"-"
+    READ_RUN_SEQUENCE: bytes = b"."
+    READ_RUN_DAY_TABLE: bytes = b"2"
+    READ_COUNTER: bytes = b"5"
     READ_LARGE_DOTS_PICTURE_MEMORY_CONFIGURATION = b"8"
     READ_DATE = b";"
 
 
-FileName = _GetterEnum(
+FileName: Enum = Enum(
     'FileName',
     [(f"FILE_{'PRIORITY' if x == 48 else x - 31}", x.to_bytes(1, "big")) for x in range(0x20, 0x7F)]
 )
@@ -209,297 +214,297 @@ class TextPosition(_GetterEnum):
     """
     Text positions (useless for the BetaBrite, but position needs to be included in packets for validity)
     """
-    TEXT_POS_MIDDLE = b" "  # center text vertically
-    TEXT_POS_TOP = b"\""  # text begins at top and at most n-1 lines
-    TEXT_POS_BOTTOM = b"&"  # text immediatly follows the TOP
-    TEXT_POS_FILL = b"0"  # center text verically and use all
+    TEXT_POS_MIDDLE: bytes = b" "  # center text vertically
+    TEXT_POS_TOP: bytes = b"\""  # text begins at top and at most n-1 lines
+    TEXT_POS_BOTTOM: bytes = b"&"  # text immediatly follows the TOP
+    TEXT_POS_FILL: bytes = b"0"  # center text verically and use all
 
 
 class TextMode(_GetterEnum):
     """
     Text modes / animations
     """
-    MODE_ROTATE = b"a"  # rotate right to left
-    MODE_HOLD = b"b"  # stationary
-    MODE_FLASH = b"c"  # stationary and flash
-    MODE_ROLLUP = b"e"  # push up old message by new message
-    MODE_ROLLDOWN = b"f"  # push down old message by new message
-    MODE_ROLLLEFT = b"g"  # push left old message by new message
-    MODE_ROLLRIGHT = b"h"  # push right old message by new message
-    MODE_WIPEUP = b"i"  # wipe up over old message with new
-    MODE_WIPEDOWN = b"j"  # wipe down over old message with new
-    MODE_WIPELEFT = b"k"  # wipe left over old message with new
-    MODE_WIPERIGHT = b"l"  # wipe right over old message with new
-    MODE_SCROLL = b"m"  # new message pushes the bottom line
+    MODE_ROTATE: bytes = b"a"  # rotate right to left
+    MODE_HOLD: bytes = b"b"  # stationary
+    MODE_FLASH: bytes = b"c"  # stationary and flash
+    MODE_ROLLUP: bytes = b"e"  # push up old message by new message
+    MODE_ROLLDOWN: bytes = b"f"  # push down old message by new message
+    MODE_ROLLLEFT: bytes = b"g"  # push left old message by new message
+    MODE_ROLLRIGHT: bytes = b"h"  # push right old message by new message
+    MODE_WIPEUP: bytes = b"i"  # wipe up over old message with new
+    MODE_WIPEDOWN: bytes = b"j"  # wipe down over old message with new
+    MODE_WIPELEFT: bytes = b"k"  # wipe left over old message with new
+    MODE_WIPERIGHT: bytes = b"l"  # wipe right over old message with new
+    MODE_SCROLL: bytes = b"m"  # new message pushes the bottom line
     # to the top of a 2 line sign
-    MODE_AUTO = b"o"  # random mode selected automatically
-    MODE_ROLLIN = b"p"  # new message pushed inward
-    MODE_ROLLOUT = b"q"  # new message pushed outward
-    MODE_WIPEIN = b"r"  # new message wiped over old inward
-    MODE_WIPEOUT = b"s"  # new message wiped over old outward
-    MODE_CMPRSROT = b"t"  # rotate right to left with text
+    MODE_AUTO: bytes = b"o"  # random mode selected automatically
+    MODE_ROLLIN: bytes = b"p"  # new message pushed inward
+    MODE_ROLLOUT: bytes = b"q"  # new message pushed outward
+    MODE_WIPEIN: bytes = b"r"  # new message wiped over old inward
+    MODE_WIPEOUT: bytes = b"s"  # new message wiped over old outward
+    MODE_CMPRSROT: bytes = b"t"  # rotate right to left with text
     # only half as wide
-    MODE_TWINKLE = b"n0"  # twinkle message
-    MODE_SPARKLE = b"n1"  # new message sparkles over the old
-    MODE_SNOW = b"n2"  # snow the new message
-    MODE_INTERLOCK = b"n3"  # new message interlocks over the old
-    MODE_SWITCH = b"n4"  # switch "off" the old message char by
+    MODE_TWINKLE: bytes = b"n0"  # twinkle message
+    MODE_SPARKLE: bytes = b"n1"  # new message sparkles over the old
+    MODE_SNOW: bytes = b"n2"  # snow the new message
+    MODE_INTERLOCK: bytes = b"n3"  # new message interlocks over the old
+    MODE_SWITCH: bytes = b"n4"  # switch "off" the old message char by
     # char.  new message switches "on"
     # char by char
-    MODE_SLIDE = b"n5"  # slide chars right to left one at a
+    MODE_SLIDE: bytes = b"n5"  # slide chars right to left one at a
     # time
-    MODE_SPRAY = b"n6"  # spray message right to left
-    MODE_STARBURST = b"n7"  # explode new message
-    MODE_WELCOME = b"n8"  # display a script "Welcome"
-    MODE_SLOTMACHINE = b"n9"  # display slot machine reels
-    MODE_NEWSFLASH = b"nA"  # display "Newsflash" animation
-    MODE_TRUMPET = b"nB"  # display a trumpet animation
-    MODE_THANKYOU = b"nS"  # display a script "Thank You"
-    MODE_NOSMOKING = b"nU"  # display "No Smoking" animation
-    MODE_DRINKDRIVE = b"nV"  # display "Don't Drink and Drive" animation
-    MODE_ANIMAL = b"nW"  # display a running animal
-    MODE_FISH = b"nW"  # display fish
+    MODE_SPRAY: bytes = b"n6"  # spray message right to left
+    MODE_STARBURST: bytes = b"n7"  # explode new message
+    MODE_WELCOME: bytes = b"n8"  # display a script "Welcome"
+    MODE_SLOTMACHINE: bytes = b"n9"  # display slot machine reels
+    MODE_NEWSFLASH: bytes = b"nA"  # display "Newsflash" animation
+    MODE_TRUMPET: bytes = b"nB"  # display a trumpet animation
+    MODE_THANKYOU: bytes = b"nS"  # display a script "Thank You"
+    MODE_NOSMOKING: bytes = b"nU"  # display "No Smoking" animation
+    MODE_DRINKDRIVE: bytes = b"nV"  # display "Don't Drink and Drive" animation
+    MODE_ANIMAL: bytes = b"nW"  # display a running animal
+    MODE_FISH: bytes = b"nW"  # display fish
     #   (BetaBrite alternate for ANIMAL)
-    MODE_FIREWORKS = b"nX"  # display fireworks animation
-    MODE_TURBOCAR = b"nY"  # display a car animation
-    MODE_BALLOONS = b"nY"  # display a balloon animation
+    MODE_FIREWORKS: bytes = b"nX"  # display fireworks animation
+    MODE_TURBOCAR: bytes = b"nY"  # display a car animation
+    MODE_BALLOONS: bytes = b"nY"  # display a balloon animation
     #   (BetaBrite alternate for TURBOCAR)
-    MODE_CHERRYBOMB = b"nZ"  # display a cherry bomb animation
+    MODE_CHERRYBOMB: bytes = b"nZ"  # display a cherry bomb animation
 
 
 class TextColor(_GetterEnum):
     """
     Text colors
     """
-    TEXT_COLOR_RED = b"\x1c\x31"  # set text color to red
-    TEXT_COLOR_GREEN = b"\x1c\x32"  # set text color to green
-    TEXT_COLOR_AMBER = b"\x1c\x33"  # set text color to amber
-    TEXT_COLOR_DIMRED = b"\x1c\x34"  # set text color to dim red
-    TEXT_COLOR_DIMGREEN = b"\x1c\x35"  # set text color to dim green
-    TEXT_COLOR_BROWN = b"\x1c\x36"  # set text color to brown
-    TEXT_COLOR_ORANGE = b"\x1c\x37"  # set text color to orange
-    TEXT_COLOR_YELLOW = b"\x1c\x38"  # set text color to yellow
-    TEXT_COLOR_RAINBOW1 = b"\x1c\x39"  # set text color to rainbow all chars
-    TEXT_COLOR_RAINBOW2 = b"\x1c\x41"  # set text color to rainbow indiv chars
-    TEXT_COLOR_MIX = b"\x1c\x42"  # each char gets a differnt color
-    TEXT_COLOR_AUTO = b"\x1c\x43"  # cycle through color modes
+    TEXT_COLOR_RED: bytes = b"\x1c\x31"  # set text color to red
+    TEXT_COLOR_GREEN: bytes = b"\x1c\x32"  # set text color to green
+    TEXT_COLOR_AMBER: bytes = b"\x1c\x33"  # set text color to amber
+    TEXT_COLOR_DIMRED: bytes = b"\x1c\x34"  # set text color to dim red
+    TEXT_COLOR_DIMGREEN: bytes = b"\x1c\x35"  # set text color to dim green
+    TEXT_COLOR_BROWN: bytes = b"\x1c\x36"  # set text color to brown
+    TEXT_COLOR_ORANGE: bytes = b"\x1c\x37"  # set text color to orange
+    TEXT_COLOR_YELLOW: bytes = b"\x1c\x38"  # set text color to yellow
+    TEXT_COLOR_RAINBOW1: bytes = b"\x1c\x39"  # set text color to rainbow all chars
+    TEXT_COLOR_RAINBOW2: bytes = b"\x1c\x41"  # set text color to rainbow indiv chars
+    TEXT_COLOR_MIX: bytes = b"\x1c\x42"  # each char gets a differnt color
+    TEXT_COLOR_AUTO: bytes = b"\x1c\x43"  # cycle through color modes
 
 
 class TextCharacter(_GetterEnum):
     """
     Characters used in text
     """
-    LF = b"\x0a"  # Line Feed
-    CR = b"\x0d"  # Carriage Return (new line)
-    CENTS = b"^"  # cents sign
-    HALF_SPACE = b"~"  # half a space
-    BLOCK_CHAR = b"\x7f"  # a square block character
-    C_CEDILLA = b"\x80"  # capital 'c' with cedilla (i think)
-    u_DIAERESIS = b"\x81"  # lowercase 'u' with diaeresis
-    e_GRAVE = b"\x82"  # lowercase 'e' with grave
-    a_CIRCUMFLEX = b"\x83"  # lowercase 'a' with circumflex
-    a_DIAERESIS = b"\x84"  # lowercase 'a' with diaeresis
-    a_ACUTE = b"\x85"  # lowercase 'a' with acute
-    a_RING_ABOVE = b"\x86"  # lowercase 'a' with ring above
-    c_CEDILLA = b"\x87"  # lowercase 'c' with cedilla
-    e_CIRCUMFLEX = b"\x88"  # lowercase 'e' with circumflex
-    e_DIAERESIS = b"\x89"  # lowercase 'e' with diaeresis
-    i_DIAERESIS = b"\x8b"  # lowercase 'i' with diaeresis
-    i_CIRCUMFLEX = b"\x8c"  # lowercase 'i' with circumflex
-    i_GRAVE = b"\x8d"  # lowercase 'i' with grave
-    A_DIAERESIS = b"\x8e"  # capital 'a' with diaeresis
-    A_RING_ABOVE = b"\x8f"  # capital 'a' with ring above
-    E_ACUTE = b"\x90"  # capital 'e' with acute
-    ae_LIGATURE = b"\x91"  # lowercase 'ae' ligature
-    AE_LIGATURE = b"\x92"  # capital 'ae' ligature
-    o_CIRCUMFLEX = b"\x93"  # lowercase 'o' with circumflex
-    o_DIAERESIS = b"\x94"  # lowercase 'o' with diaeresis
-    o_GRAVE = b"\x95"  # lowercase 'o' with grave
-    u_CIRCUMFLEX = b"\x96"  # lowercase 'u' with circumflex
-    u_GRAVE = b"\x97"  # lowercase 'u' with grave
-    y_DIAERESIS = b"\x98"  # lowercase 'y' with diaeresis
-    O_DIAERESIS = b"\x99"  # capital 'o' with diaeresis
-    U_DIAERESIS = b"\x9a"  # capital 'u' with diaeresis
-    POUNDS = b"\x9c"  # british pounds sign
-    YEN = b"\x9d"  # yen sign
-    PERCENT = b"\x9e"  # percent sign
-    FLORIN = b"\x9f"  # slant lowercase f
-    i_ACUTE = b"\xa1"  # lowercase 'i' with acute
-    o_ACUTE = b"\xa2"  # lowercase 'o' with acute
-    u_ACUTE = b"\xa3"  # lowercase 'u' with acute
-    n_TILDE = b"\xa4"  # lowercase 'n' with tilde
-    N_TILDE = b"\xa5"  # capital 'n' with tilde
-    SUPER_a = b"\xa6"  # superscript 'a'
-    SUPER_o = b"\xa7"  # superscript 'o'
-    INVERT_QUESTION = b"\xa8"  # inverted question mark
-    DEGREES = b"\xa9"  # degree sign (superscript circle)
-    INVERT_EXCLAIM = b"\xaa"  # inverted exclaimation mark
-    SINGLE_COL_SPACE = b"\xab"  # single column space
-    theta = b"\xac"  # lowercase theta
-    THETA = b"\xad"  # capital theta
-    c_ACUTE = b"\xae"  # lowercase 'c' with acute
-    C_ACUTE = b"\xaf"  # capital 'c' with acute
-    CHAR_c = b"\xb0"  # lowercase 'c'
-    CHAR_C = b"\xb1"  # capital 'c'
-    CHAR_d = b"\xb2"  # lowercase 'd'
-    CHAR_D = b"\xb3"  # capital 'd'
-    CHAR_s = b"\xb4"  # lowercase 's'
-    CHAR_z = b"\xb5"  # lowercase 'z'
-    CHAR_Z = b"\xb6"  # capital 'z'
-    BETA = b"\xb7"  # beta
-    CHAR_S = b"\xb8"  # capital 's'
-    BETA2 = b"\xb9"  # beta
-    A_ACUTE = b"\xba"  # capital 'a' with acute
-    A_GRAVE = b"\xbb"  # capital 'a' with grave accent
-    A_2ACUTE = b"\xbc"  # capital 'a' with two accents
-    a_2ACUTE = b"\xbd"  # lowercase ''a' with two accents
-    I_ACUTE = b"\xbf"  # capital 'i' with accute
-    O_TILDE = b"\xc0"  # capital 'o' with tilde
-    o_TILDE = b"\xc1"  # lowercase 'o' with tilde
-    XC_C_CEDILLA = b"\x08\x20"  # capital 'c' with cedilla
-    XC_u_DIAERESIS = b"\x08\x21"  # lowercase 'u' with diaeresis
-    XC_e_GRAVE = b"\x08\x22"  # lowercase 'e' with grave accent
-    XC_a_CIRCUMFLEX = b"\x08\x23"  # lowercase 'a' with circumflex
-    XC_a_DIAERESIS = b"\x08\x24"  # lowercase 'a' with diaeresis
-    XC_a_ACUTE = b"\x08\x25"  # lowercase 'a' with accute
-    XC_a_RING_ABOVE = b"\x08\x26"  # lowercase 'a' with ring above
-    XC_c_CEDILLA = b"\x08\x27"  # lowercase 'c' with cedilla
-    XC_e_CIRCUMFLEX = b"\x08\x28"  # lowercase 'e' with circumflex
-    XC_e_DIAERESIS = b"\x08\x29"  # lowercase 'e' with diaeresis
-    XC_i_DIAERESIS = b"\x08\x2b"  # lowercase 'i' with diaeresis
-    XC_i_CIRCUMFLEX = b"\x08\x2c"  # lowercase 'i' with circumflex
-    XC_i_GRAVE = b"\x08\x2d"  # lowercase 'i' with grave accent
-    XC_A_DIAERESIS = b"\x08\x2e"  # capital 'a' with diaeresis
-    XC_A_RING_ABOVE = b"\x08\x2f"  # capital 'a' with ring above
-    XC_E_ACUTE = b"\x08\x30"  # capital 'e' with accute
-    XC_ae_LIGATURE = b"\x08\x31"  # lowercase 'ae' ligature
-    XC_AE_LIGATURE = b"\x08\x32"  # capital 'ae' ligature
-    XC_o_CIRCUMFLEX = b"\x08\x33"  # lowercase 'o' with circumflex
-    XC_o_DIAERESIS = b"\x08\x34"  # lowercase 'o' with diaeresis
-    XC_o_GRAVE = b"\x08\x35"  # lowercase 'o' with grave accent
-    XC_u_CIRCUMFLEX = b"\x08\x36"  # lowercase 'u' with circumflex
-    XC_u_GRAVE = b"\x08\x37"  # lowercase 'u' with grave accent
-    XC_y_DIAERESIS = b"\x08\x38"  # lowercase 'y' with diaeresis
-    XC_O_DIAERESIS = b"\x08\x39"  # capital 'o' with diaeresis
-    XC_U_DIAERESIS = b"\x08\x3a"  # capital 'u' with diaeresis
-    XC_CENTS = b"\x08\x3b"  # cents sign
-    XC_POUNDS = b"\x08\x3c"  # british pounds sign
-    XC_YEN = b"\x08\x3d"  # yen sign
-    XC_PERCENT = b"\x08\x3e"  # percent sign
-    XC_SLANT_F = b"\x08\x3f"  # slant lowercase f
-    XC_i_ACUTE = b"\x08\x41"  # lowercase 'i' with accute
-    XC_o_ACUTE = b"\x08\x42"  # lowercase 'o' with accute
-    XC_u_ACUTE = b"\x08\x43"  # lowercase 'u' with accute
-    XC_n_TILDE = b"\x08\x44"  # lowercase 'n' with tilde
-    XC_N_TILDE = b"\x08\x45"  # capital 'n' with tilde
-    XC_SUPER_a = b"\x08\x46"  # superscript 'a'
-    XC_SUPER_o = b"\x08\x47"  # superscript 'o'
-    XC_INVERT_QUESTION = b"\x08\x48"  # inverted question mark
-    XC_DEGREES = b"\x08\x49"  # degree sign (superscript circle)
-    XC_INVERT_EXCLAIM = b"\x08\x4a"  # inverted exclaimation mark
-    XC_SINGLE_COL_SPACE = b"\x08\x4b"  # single column space
-    XC_theta = b"\x08\x4c"  # lowercase theta
-    XC_THETA = b"\x08\x4d"  # capital theta
-    XC_c_ACUTE = b"\x08\x4e"  # lowercase 'c' with accute
-    XC_C_ACUTE = b"\x08\x4f"  # capital 'c' with accute
-    XC_c = b"\x08\x50"  # lowercase 'c'
-    XC_C = b"\x08\x51"  # capital 'c'
-    XC_d = b"\x08\x52"  # lowercase 'd'
-    XC_D = b"\x08\x53"  # capital 'd'
-    XC_s = b"\x08\x54"  # lowercase 's'
-    XC_z = b"\x08\x55"  # lowercase 'z'
-    XC_Z = b"\x08\x56"  # capital 'z'
-    XC_BETA = b"\x08\x57"  # beta
-    XC_S = b"\x08\x58"  # capital 's'
-    XC_BETA2 = b"\x08\x59"  # beta
-    XC_A_ACUTE = b"\x08\x5a"  # capital 'a' with accute
-    XC_A_GRAVE = b"\x08\x5b"  # capital 'a' with grave accute
-    XC_A_2ACUTE = b"\x08\x5c"  # capital 'a' with two accutes
-    XC_a_2ACUTE = b"\x08\x5d"  # lowercase ''a' with two accutes
-    XC_I_ACUTE = b"\x08\x5f"  # capital 'i' with accute
-    XC_O_TILDE = b"\x08\x60"  # capital 'o' with tilde
-    XC_o_TILDE = b"\x08\x61"  # lowecase 'o' with tilde
+    LF: bytes = b"\x0a"  # Line Feed
+    CR: bytes = b"\x0d"  # Carriage Return (new line)
+    CENTS: bytes = b"^"  # cents sign
+    HALF_SPACE: bytes = b"~"  # half a space
+    BLOCK_CHAR: bytes = b"\x7f"  # a square block character
+    C_CEDILLA: bytes = b"\x80"  # capital 'c' with cedilla (i think)
+    u_DIAERESIS: bytes = b"\x81"  # lowercase 'u' with diaeresis
+    e_GRAVE: bytes = b"\x82"  # lowercase 'e' with grave
+    a_CIRCUMFLEX: bytes = b"\x83"  # lowercase 'a' with circumflex
+    a_DIAERESIS: bytes = b"\x84"  # lowercase 'a' with diaeresis
+    a_ACUTE: bytes = b"\x85"  # lowercase 'a' with acute
+    a_RING_ABOVE: bytes = b"\x86"  # lowercase 'a' with ring above
+    c_CEDILLA: bytes = b"\x87"  # lowercase 'c' with cedilla
+    e_CIRCUMFLEX: bytes = b"\x88"  # lowercase 'e' with circumflex
+    e_DIAERESIS: bytes = b"\x89"  # lowercase 'e' with diaeresis
+    i_DIAERESIS: bytes = b"\x8b"  # lowercase 'i' with diaeresis
+    i_CIRCUMFLEX: bytes = b"\x8c"  # lowercase 'i' with circumflex
+    i_GRAVE: bytes = b"\x8d"  # lowercase 'i' with grave
+    A_DIAERESIS: bytes = b"\x8e"  # capital 'a' with diaeresis
+    A_RING_ABOVE: bytes = b"\x8f"  # capital 'a' with ring above
+    E_ACUTE: bytes = b"\x90"  # capital 'e' with acute
+    ae_LIGATURE: bytes = b"\x91"  # lowercase 'ae' ligature
+    AE_LIGATURE: bytes = b"\x92"  # capital 'ae' ligature
+    o_CIRCUMFLEX: bytes = b"\x93"  # lowercase 'o' with circumflex
+    o_DIAERESIS: bytes = b"\x94"  # lowercase 'o' with diaeresis
+    o_GRAVE: bytes = b"\x95"  # lowercase 'o' with grave
+    u_CIRCUMFLEX: bytes = b"\x96"  # lowercase 'u' with circumflex
+    u_GRAVE: bytes = b"\x97"  # lowercase 'u' with grave
+    y_DIAERESIS: bytes = b"\x98"  # lowercase 'y' with diaeresis
+    O_DIAERESIS: bytes = b"\x99"  # capital 'o' with diaeresis
+    U_DIAERESIS: bytes = b"\x9a"  # capital 'u' with diaeresis
+    POUNDS: bytes = b"\x9c"  # british pounds sign
+    YEN: bytes = b"\x9d"  # yen sign
+    PERCENT: bytes = b"\x9e"  # percent sign
+    FLORIN: bytes = b"\x9f"  # slant lowercase f
+    i_ACUTE: bytes = b"\xa1"  # lowercase 'i' with acute
+    o_ACUTE: bytes = b"\xa2"  # lowercase 'o' with acute
+    u_ACUTE: bytes = b"\xa3"  # lowercase 'u' with acute
+    n_TILDE: bytes = b"\xa4"  # lowercase 'n' with tilde
+    N_TILDE: bytes = b"\xa5"  # capital 'n' with tilde
+    SUPER_a: bytes = b"\xa6"  # superscript 'a'
+    SUPER_o: bytes = b"\xa7"  # superscript 'o'
+    INVERT_QUESTION: bytes = b"\xa8"  # inverted question mark
+    DEGREES: bytes = b"\xa9"  # degree sign (superscript circle)
+    INVERT_EXCLAIM: bytes = b"\xaa"  # inverted exclaimation mark
+    SINGLE_COL_SPACE: bytes = b"\xab"  # single column space
+    theta: bytes = b"\xac"  # lowercase theta
+    THETA: bytes = b"\xad"  # capital theta
+    c_ACUTE: bytes = b"\xae"  # lowercase 'c' with acute
+    C_ACUTE: bytes = b"\xaf"  # capital 'c' with acute
+    CHAR_c: bytes = b"\xb0"  # lowercase 'c'
+    CHAR_C: bytes = b"\xb1"  # capital 'c'
+    CHAR_d: bytes = b"\xb2"  # lowercase 'd'
+    CHAR_D: bytes = b"\xb3"  # capital 'd'
+    CHAR_s: bytes = b"\xb4"  # lowercase 's'
+    CHAR_z: bytes = b"\xb5"  # lowercase 'z'
+    CHAR_Z: bytes = b"\xb6"  # capital 'z'
+    BETA: bytes = b"\xb7"  # beta
+    CHAR_S: bytes = b"\xb8"  # capital 's'
+    BETA2: bytes = b"\xb9"  # beta
+    A_ACUTE: bytes = b"\xba"  # capital 'a' with acute
+    A_GRAVE: bytes = b"\xbb"  # capital 'a' with grave accent
+    A_2ACUTE: bytes = b"\xbc"  # capital 'a' with two accents
+    a_2ACUTE: bytes = b"\xbd"  # lowercase ''a' with two accents
+    I_ACUTE: bytes = b"\xbf"  # capital 'i' with accute
+    O_TILDE: bytes = b"\xc0"  # capital 'o' with tilde
+    o_TILDE: bytes = b"\xc1"  # lowercase 'o' with tilde
+    XC_C_CEDILLA: bytes = b"\x08\x20"  # capital 'c' with cedilla
+    XC_u_DIAERESIS: bytes = b"\x08\x21"  # lowercase 'u' with diaeresis
+    XC_e_GRAVE: bytes = b"\x08\x22"  # lowercase 'e' with grave accent
+    XC_a_CIRCUMFLEX: bytes = b"\x08\x23"  # lowercase 'a' with circumflex
+    XC_a_DIAERESIS: bytes = b"\x08\x24"  # lowercase 'a' with diaeresis
+    XC_a_ACUTE: bytes = b"\x08\x25"  # lowercase 'a' with accute
+    XC_a_RING_ABOVE: bytes = b"\x08\x26"  # lowercase 'a' with ring above
+    XC_c_CEDILLA: bytes = b"\x08\x27"  # lowercase 'c' with cedilla
+    XC_e_CIRCUMFLEX: bytes = b"\x08\x28"  # lowercase 'e' with circumflex
+    XC_e_DIAERESIS: bytes = b"\x08\x29"  # lowercase 'e' with diaeresis
+    XC_i_DIAERESIS: bytes = b"\x08\x2b"  # lowercase 'i' with diaeresis
+    XC_i_CIRCUMFLEX: bytes = b"\x08\x2c"  # lowercase 'i' with circumflex
+    XC_i_GRAVE: bytes = b"\x08\x2d"  # lowercase 'i' with grave accent
+    XC_A_DIAERESIS: bytes = b"\x08\x2e"  # capital 'a' with diaeresis
+    XC_A_RING_ABOVE: bytes = b"\x08\x2f"  # capital 'a' with ring above
+    XC_E_ACUTE: bytes = b"\x08\x30"  # capital 'e' with accute
+    XC_ae_LIGATURE: bytes = b"\x08\x31"  # lowercase 'ae' ligature
+    XC_AE_LIGATURE: bytes = b"\x08\x32"  # capital 'ae' ligature
+    XC_o_CIRCUMFLEX: bytes = b"\x08\x33"  # lowercase 'o' with circumflex
+    XC_o_DIAERESIS: bytes = b"\x08\x34"  # lowercase 'o' with diaeresis
+    XC_o_GRAVE: bytes = b"\x08\x35"  # lowercase 'o' with grave accent
+    XC_u_CIRCUMFLEX: bytes = b"\x08\x36"  # lowercase 'u' with circumflex
+    XC_u_GRAVE: bytes = b"\x08\x37"  # lowercase 'u' with grave accent
+    XC_y_DIAERESIS: bytes = b"\x08\x38"  # lowercase 'y' with diaeresis
+    XC_O_DIAERESIS: bytes = b"\x08\x39"  # capital 'o' with diaeresis
+    XC_U_DIAERESIS: bytes = b"\x08\x3a"  # capital 'u' with diaeresis
+    XC_CENTS: bytes = b"\x08\x3b"  # cents sign
+    XC_POUNDS: bytes = b"\x08\x3c"  # british pounds sign
+    XC_YEN: bytes = b"\x08\x3d"  # yen sign
+    XC_PERCENT: bytes = b"\x08\x3e"  # percent sign
+    XC_SLANT_F: bytes = b"\x08\x3f"  # slant lowercase f
+    XC_i_ACUTE: bytes = b"\x08\x41"  # lowercase 'i' with accute
+    XC_o_ACUTE: bytes = b"\x08\x42"  # lowercase 'o' with accute
+    XC_u_ACUTE: bytes = b"\x08\x43"  # lowercase 'u' with accute
+    XC_n_TILDE: bytes = b"\x08\x44"  # lowercase 'n' with tilde
+    XC_N_TILDE: bytes = b"\x08\x45"  # capital 'n' with tilde
+    XC_SUPER_a: bytes = b"\x08\x46"  # superscript 'a'
+    XC_SUPER_o: bytes = b"\x08\x47"  # superscript 'o'
+    XC_INVERT_QUESTION: bytes = b"\x08\x48"  # inverted question mark
+    XC_DEGREES: bytes = b"\x08\x49"  # degree sign (superscript circle)
+    XC_INVERT_EXCLAIM: bytes = b"\x08\x4a"  # inverted exclaimation mark
+    XC_SINGLE_COL_SPACE: bytes = b"\x08\x4b"  # single column space
+    XC_theta: bytes = b"\x08\x4c"  # lowercase theta
+    XC_THETA: bytes = b"\x08\x4d"  # capital theta
+    XC_c_ACUTE: bytes = b"\x08\x4e"  # lowercase 'c' with accute
+    XC_C_ACUTE: bytes = b"\x08\x4f"  # capital 'c' with accute
+    XC_c: bytes = b"\x08\x50"  # lowercase 'c'
+    XC_C: bytes = b"\x08\x51"  # capital 'c'
+    XC_d: bytes = b"\x08\x52"  # lowercase 'd'
+    XC_D: bytes = b"\x08\x53"  # capital 'd'
+    XC_s: bytes = b"\x08\x54"  # lowercase 's'
+    XC_z: bytes = b"\x08\x55"  # lowercase 'z'
+    XC_Z: bytes = b"\x08\x56"  # capital 'z'
+    XC_BETA: bytes = b"\x08\x57"  # beta
+    XC_S: bytes = b"\x08\x58"  # capital 's'
+    XC_BETA2: bytes = b"\x08\x59"  # beta
+    XC_A_ACUTE: bytes = b"\x08\x5a"  # capital 'a' with accute
+    XC_A_GRAVE: bytes = b"\x08\x5b"  # capital 'a' with grave accute
+    XC_A_2ACUTE: bytes = b"\x08\x5c"  # capital 'a' with two accutes
+    XC_a_2ACUTE: bytes = b"\x08\x5d"  # lowercase ''a' with two accutes
+    XC_I_ACUTE: bytes = b"\x08\x5f"  # capital 'i' with accute
+    XC_O_TILDE: bytes = b"\x08\x60"  # capital 'o' with tilde
+    XC_o_TILDE: bytes = b"\x08\x61"  # lowecase 'o' with tilde
 
 
 class SignAddress(_GetterEnum):
     """
     Sign addresses
     """
-    SIGN_ADDRESS_BROADCAST = b"00"  # All signs on the network should "listen" to this transmission
+    SIGN_ADDRESS_BROADCAST: bytes = b"00"  # All signs on the network should "listen" to this transmission
 
 
 class PacketCharacter(_GetterEnum):
     """
     Characters (and character sequences) only utilized in packets (i.e. not as text characters) that don't fit elsewhere
     """
-    WAKEUP = b"\x00\x00\x00\x00\x00\x00"
-    NUL = b"\x00"  # NULl
-    SOH = b"\x01"  # Start Of Header
-    STX = b"\x02"  # Start Of Text
-    ETX = b"\x03"  # End of TeXt
-    EOT = b"\x04"  # End Of Transmission
-    DBL_HEIGHT_CHARS_ON = b"\x05\x30"  # double height chars off (def)
-    DBL_HEIGHT_CHARS_OFF = b"\x05\x31"  # double height chars on
-    TRUE_DESCENDERS_ON = b"\x06\x30"  # true descenders off (default)
-    TRUE_DESCENDERS_OFF = b"\x06\x31"  # true descenders on
-    CHAR_FLASH_ON = b"\x07\x30"  # character flash off (default)
-    CHAR_FLASH_OFF = b"\x07\x31"  # character flash off (default)
-    TEMP_CELSIUS = b"\x08\x1c"  # current temperature in celsius
-    TEMP_FAHRENHEIT = b"\x08\x1d"  # current temperature in fahrenheit
+    WAKEUP: bytes = b"\x00\x00\x00\x00\x00\x00"
+    NUL: bytes = b"\x00"  # NULl
+    SOH: bytes = b"\x01"  # Start Of Header
+    STX: bytes = b"\x02"  # Start Of TeXt
+    SOM: bytes = b"\x1b"  # Start Of Mode
+    ETX: bytes = b"\x03"  # End of TeXt
+    EOT: bytes = b"\x04"  # End Of Transmission
+    DBL_HEIGHT_CHARS_ON: bytes = b"\x05\x30"  # double height chars off (def)
+    DBL_HEIGHT_CHARS_OFF: bytes = b"\x05\x31"  # double height chars on
+    TRUE_DESCENDERS_ON: bytes = b"\x06\x30"  # true descenders off (default)
+    TRUE_DESCENDERS_OFF: bytes = b"\x06\x31"  # true descenders on
+    CHAR_FLASH_ON: bytes = b"\x07\x30"  # character flash off (default)
+    CHAR_FLASH_OFF: bytes = b"\x07\x31"  # character flash off (default)
+    TEMP_CELSIUS: bytes = b"\x08\x1c"  # current temperature in celsius
+    TEMP_FAHRENHEIT: bytes = b"\x08\x1d"  # current temperature in fahrenheit
 
-    COUNTER_1 = b"\x08\x7a"  # current value in counter 1
-    COUNTER_2 = b"\x08\x7b"  # current value in counter 2
-    COUNTER_3 = b"\x08\x7c"  # current value in counter 3
-    COUNTER_4 = b"\x08\x7d"  # current value in counter 4
-    COUNTER_5 = b"\x08\x7e"  # current value in counter 4
-    NO_HOLD_SPEED = b"\x09"  # no hold speed (no pause following the mode presentation. Not applicable to ROTATE or
+    COUNTER_1: bytes = b"\x08\x7a"  # current value in counter 1
+    COUNTER_2: bytes = b"\x08\x7b"  # current value in counter 2
+    COUNTER_3: bytes = b"\x08\x7c"  # current value in counter 3
+    COUNTER_4: bytes = b"\x08\x7d"  # current value in counter 4
+    COUNTER_5: bytes = b"\x08\x7e"  # current value in counter 4
+    NO_HOLD_SPEED: bytes = b"\x09"  # no hold speed (no pause following the mode presentation. Not applicable to ROTATE or
     #   COMPRESSED_ROTATE modes)
-    CURDATE_MMDDYY_SLASH = b"\x0b\x30"  # current date MM/DD/YY
-    CURDATE_DDMMYY_SLASH = b"\x0b\x31"  # current date DD/MM/YY
-    CURDATE_MMDDYY_DASH = b"\x0b\x32"  # current date MM-DD-YY
-    CURDATE_DDMMYY_DASH = b"\x0b\x33"  # current date DD-MM-YY
-    CURDATE_MMDDYY_DOT = b"\x0b\x34"  # current date MM.DD.YY
-    CURDATE_DDMMYY_DOT = b"\x0b\x35"  # current date DD.MM.YY
-    CURDATE_MMDDYY_SPACE = b"\x0b\x36"  # current date MM DD YY
-    CURDATE_DDMMYY_SPACE = b"\x0b\x37"  # current date DD MM YY
-    CURDATE_MMMDDYYYY = b"\x0b\x38"  # current date MMM.DD, YYYY
-    CURDATE_WEEKDAYY = b"\x0b\x39"  # current day of week
-    NEW_PAGE = b"\x0c"  # start next display page
-    STRING_FILE_INSERT = b"\x10"  # insert STRING file (next char is
+    CURDATE_MMDDYY_SLASH: bytes = b"\x0b\x30"  # current date MM/DD/YY
+    CURDATE_DDMMYY_SLASH: bytes = b"\x0b\x31"  # current date DD/MM/YY
+    CURDATE_MMDDYY_DASH: bytes = b"\x0b\x32"  # current date MM-DD-YY
+    CURDATE_DDMMYY_DASH: bytes = b"\x0b\x33"  # current date DD-MM-YY
+    CURDATE_MMDDYY_DOT: bytes = b"\x0b\x34"  # current date MM.DD.YY
+    CURDATE_DDMMYY_DOT: bytes = b"\x0b\x35"  # current date DD.MM.YY
+    CURDATE_MMDDYY_SPACE: bytes = b"\x0b\x36"  # current date MM DD YY
+    CURDATE_DDMMYY_SPACE: bytes = b"\x0b\x37"  # current date DD MM YY
+    CURDATE_MMMDDYYYY: bytes = b"\x0b\x38"  # current date MMM.DD, YYYY
+    CURDATE_WEEKDAYY: bytes = b"\x0b\x39"  # current day of week
+    NEW_PAGE: bytes = b"\x0c"  # start next display page
+    STRING_FILE_INSERT: bytes = b"\x10"  # insert STRING file (next char is
     #   the filename)
-    WIDE_CHARS_OFF = b"\x11"  # disable wide characters
-    WIDE_CHARS_ON = b"\x12"  # enables wide characters
-    CALL_TIME = b"\x13"
-    DOTS_INSERT = b"\x14"  # insert DOTS picture (next char is
+    WIDE_CHARS_OFF: bytes = b"\x11"  # disable wide characters
+    WIDE_CHARS_ON: bytes = b"\x12"  # enables wide characters
+    CALL_TIME: bytes = b"\x13"
+    DOTS_INSERT: bytes = b"\x14"  # insert DOTS picture (next char is
     #   the filename)
-    SPEED_1 = b"\x15"  # set scroll speed to 1 (slowest)
-    SPEED_2 = b"\x16"  # set scroll speed to 2
-    SPEED_3 = b"\x17"  # set scroll speed to 3
-    SPEED_4 = b"\x18"  # set scroll speed to 4
-    SPEED_5 = b"\x19"  # set scroll speed to 5 (fastest)
-    CHARSET_5_NORMAL = b"\x1a\x31"  # set character set 5 high normal
-    CHARSET_7_NORMAL = b"\x1a\x33"  # set character set 7 high normal
-    CHARSET_7_FANCY = b"\x1a\x35"  # set character set 7 high fancy
-    CHARSET_10_NORMAL = b"\x1a\x36"  # set character set 10 high normal
-    CHARSET_FULL_FANCY = b"\x1a\x38"  # set character set full height fancy
-    CHARSET_FULL_NORMAL = b"\x1a\x39"  # set character set full height normal
-    SOM = b"\x1b"  # Start Of Mode
+    SPEED_1: bytes = b"\x15"  # set scroll speed to 1 (slowest)
+    SPEED_2: bytes = b"\x16"  # set scroll speed to 2
+    SPEED_3: bytes = b"\x17"  # set scroll speed to 3
+    SPEED_4: bytes = b"\x18"  # set scroll speed to 4
+    SPEED_5: bytes = b"\x19"  # set scroll speed to 5 (fastest)
+    CHARSET_5_NORMAL: bytes = b"\x1a\x31"  # set character set 5 high normal
+    CHARSET_7_NORMAL: bytes = b"\x1a\x33"  # set character set 7 high normal
+    CHARSET_7_FANCY: bytes = b"\x1a\x35"  # set character set 7 high fancy
+    CHARSET_10_NORMAL: bytes = b"\x1a\x36"  # set character set 10 high normal
+    CHARSET_FULL_FANCY: bytes = b"\x1a\x38"  # set character set full height fancy
+    CHARSET_FULL_NORMAL: bytes = b"\x1a\x39"  # set character set full height normal
 
-    CHAR_ATTRIB_WIDE_ON = b"\x1d\x30\x31"  # char attrib wide on
-    CHAR_ATTRIB_WIDE_OFF = b"\x1d\x30\x30"  # char attrib wide off
-    CHAR_ATTRIB_DBLW_ON = b"\x1d\x31\x31"  # char attrib dbl width on
-    CHAR_ATTRIB_DBLW_OFF = b"\x1d\x31\x30"  # char attrib dbl width off
-    CHAR_ATTRIB_DBLH_ON = b"\x1d\x32\x31"  # char attrib dbl height on
-    CHAR_ATTRIB_DBLH_OFF = b"\x1d\x32\x30"  # char attrib dbl height off
-    CHAR_ATTRIB_DESC_ON = b"\x1d\x33\31"  # char attrib true desc on
-    CHAR_ATTRIB_DESC_OFF = b"\x1d\x33\30"  # char attrib true desc off
-    CHAR_ATTRIB_FIX_ON = b"\x1d\x34\x31"  # char attrib fixed width on
-    CHAR_ATTRIB_FIX_OFF = b"\x1d\x34\x30"  # char attrib fixed width off
-    CHAR_ATTRIB_FNCY_ON = b"\x1d\x35\x31"  # char attrib fancy on
-    CHAR_ATTRIB_FNCY_OFF = b"\x1d\x35\x30"  # char attrib fancy off
-    FIXED_WIDTH_OFF = b"\x1e\x30"  # fixed width chars off (default)
-    FIXED_WIDTH_ON = b"\x1e\x31"  # fixed width chars on
-    ALPHA_DOTS_INSERT = b"\x1f"  # insert ALPHAVISION DOTS picture
+    CHAR_ATTRIB_WIDE_ON: bytes = b"\x1d\x30\x31"  # char attrib wide on
+    CHAR_ATTRIB_WIDE_OFF: bytes = b"\x1d\x30\x30"  # char attrib wide off
+    CHAR_ATTRIB_DBLW_ON: bytes = b"\x1d\x31\x31"  # char attrib dbl width on
+    CHAR_ATTRIB_DBLW_OFF: bytes = b"\x1d\x31\x30"  # char attrib dbl width off
+    CHAR_ATTRIB_DBLH_ON: bytes = b"\x1d\x32\x31"  # char attrib dbl height on
+    CHAR_ATTRIB_DBLH_OFF: bytes = b"\x1d\x32\x30"  # char attrib dbl height off
+    CHAR_ATTRIB_DESC_ON: bytes = b"\x1d\x33\31"  # char attrib true desc on
+    CHAR_ATTRIB_DESC_OFF: bytes = b"\x1d\x33\30"  # char attrib true desc off
+    CHAR_ATTRIB_FIX_ON: bytes = b"\x1d\x34\x31"  # char attrib fixed width on
+    CHAR_ATTRIB_FIX_OFF: bytes = b"\x1d\x34\x30"  # char attrib fixed width off
+    CHAR_ATTRIB_FNCY_ON: bytes = b"\x1d\x35\x31"  # char attrib fancy on
+    CHAR_ATTRIB_FNCY_OFF: bytes = b"\x1d\x35\x30"  # char attrib fancy off
+    FIXED_WIDTH_OFF: bytes = b"\x1e\x30"  # fixed width chars off (default)
+    FIXED_WIDTH_ON: bytes = b"\x1e\x31"  # fixed width chars on
+    ALPHA_DOTS_INSERT: bytes = b"\x1f"  # insert ALPHAVISION DOTS picture
 #   must be followed by:
 #   SFFFFFFFFFtttt
 #     S = b"C" file is part of a

@@ -22,24 +22,24 @@ from memory import *
 '''
 Configurables
 '''
-CLI_ALLOW_TRANSMISSION = False
-CLI_TERMINAL_AND = "-"  # Animation separator
-CLI_ANIMATION_PROPERTY_SEPARATOR = ","  # Animation property separator
-SERIAL_PORT = "/dev/serial/by-id/usb-Prolific_Technology_Inc._USB-Serial_Controller_D-if00-port0"
+CLI_ALLOW_TRANSMISSION: bool = False
+CLI_TERMINAL_AND: str = "-"  # Animation separator
+CLI_ANIMATION_PROPERTY_SEPARATOR: str = ","  # Animation property separator
+SERIAL_PORT: str = "/dev/serial/by-id/usb-Prolific_Technology_Inc._USB-Serial_Controller_D-if00-port0"
 '''
 Nonconfigurables
 '''
-DOTS_TEST_ARROW = b"00000080000\r00000088000\r08888888800\r08888888880\r08888888800\r00000088000\r00000080000\r"
+DOTS_TEST_ARROW: bytes = b"00000080000\r00000088000\r08888888800\r08888888880\r08888888800\r00000088000\r00000080000\r"
 # Note that on the BetaBrite, position does not matter at all, so setting any of these does nothing
 # IT IS still required to be sent in the message packet, however
-ANIMATION_POS_DICT: Dict[str, TextPosition] = {
+ANIMATION_POS_DICT: Dict[str, bytes] = {
     'middle': TextPosition.TEXT_POS_MIDDLE,
     'top': TextPosition.TEXT_POS_TOP,
     'bottom': TextPosition.TEXT_POS_BOTTOM,
     'fill': TextPosition.TEXT_POS_FILL
 }
 
-ANIMATION_COLOR_DICT: Dict[str, TextColor] = {
+ANIMATION_COLOR_DICT: Dict[str, bytes] = {
     'red': TextColor.TEXT_COLOR_RED,
     'green': TextColor.TEXT_COLOR_GREEN,
     'amber': TextColor.TEXT_COLOR_AMBER,
@@ -53,7 +53,7 @@ ANIMATION_COLOR_DICT: Dict[str, TextColor] = {
     'autocolor': TextColor.TEXT_COLOR_AUTO
 }
 
-ANIMATION_MODE_DICT: Dict[str, TextMode] = {
+ANIMATION_MODE_DICT: Dict[str, bytes] = {
     'rotate': TextMode.MODE_ROTATE,
     'hold': TextMode.MODE_HOLD,
     'flash': TextMode.MODE_FLASH,
@@ -97,7 +97,7 @@ ANIMATION_MODE_DICT: Dict[str, TextMode] = {
 # https://www.utf8-chartable.de/unicode-utf8-table.pl
 # let a = document.querySelectorAll(".utf8");
 # a.forEach(elem => elem.innerHTML = elem.innerHTML.replace(' ','').replaceAll('0x','\\x'))
-TextCharacterTranslationDict: Dict[bytes, TextCharacter] = {
+TextCharacterTranslationDict: Dict[bytes, bytes] = {
     b'\x0a': TextCharacter.LF,
     b'\x0d': TextCharacter.CR,
     b'\xc2\xa2': TextCharacter.CENTS,
@@ -235,9 +235,15 @@ class Animation:
     """
 
     @staticmethod
-    def _validate_parameter(parameter: Union[str, Union[TextPosition, TextMode, TextColor]],
-                            dictionary: Dict[str, Union[TextPosition, TextMode, TextColor]],
-                            default_on_fail: Union[str, Union[TextPosition, TextMode, TextColor]]):
+    def _validate_parameter(parameter: Union[str, bytes],
+                            dictionary: Dict[str, bytes],
+                            default_on_fail: Union[str, bytes]) -> Union[str, bytes]:
+        """
+        Validates the given parameter, defaulting to default_on_fail if the parameter is invalid
+        :param parameter: parameter to validate
+        :param dictionary: dictionary to validate parameter against
+        :param default_on_fail: returned if given parameter is not valid
+        """
         if parameter in dictionary.keys():
             return dictionary[parameter]
         elif parameter in dictionary.values():
@@ -249,40 +255,50 @@ class Animation:
 
     def __init__(self,
                  text: str = "",
-                 mode: Union[str, TextMode] = TextMode.MODE_AUTO,
-                 color: Union[str, TextColor] = TextColor.TEXT_COLOR_AUTO,
-                 position: Union[str, TextPosition] = TextPosition.TEXT_POS_MIDDLE):
+                 mode: Union[str, bytes] = TextMode.MODE_AUTO,
+                 color: Union[str, bytes] = TextColor.TEXT_COLOR_AUTO,
+                 position: Union[str, bytes] = TextPosition.TEXT_POS_MIDDLE) -> None:
         self.text = text
-        self.mode = self._validate_parameter(mode, ANIMATION_MODE_DICT, TextMode.MODE_AUTO)
-        self.color = self._validate_parameter(color, ANIMATION_COLOR_DICT, TextColor.TEXT_COLOR_AUTO)
-        self.position = self._validate_parameter(position, ANIMATION_POS_DICT, TextPosition.TEXT_POS_MIDDLE)
+        self.mode: Union[str, bytes] = self._validate_parameter(mode, ANIMATION_MODE_DICT, TextMode.MODE_AUTO)
+        self.color: Union[str, bytes] = self._validate_parameter(color, ANIMATION_COLOR_DICT,
+                                                                 TextColor.TEXT_COLOR_AUTO)
+        self.position: Union[str, bytes] = self._validate_parameter(position, ANIMATION_POS_DICT,
+                                                                    TextPosition.TEXT_POS_MIDDLE)
 
-    def __str__(self):
+    def __str__(self) -> str:
+        """
+        String representation of this Animation
+        :return: a string representation of this Animation
+        """
         return f"Animation: text='{self.text}' mode={self.mode} color={self.color} position={self.position}"
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return self.__str__()
 
-    def reset(self):
-        self.text = ""
-        self.mode = TextMode.MODE_AUTO
-        self.color = TextColor.TEXT_COLOR_AUTO
-        self.position = TextPosition.TEXT_POS_MIDDLE
+    def reset(self) -> None:
+        self.text: str = ""
+        self.mode: bytes = TextMode.MODE_AUTO
+        self.color: bytes = TextColor.TEXT_COLOR_AUTO
+        self.position: bytes = TextPosition.TEXT_POS_MIDDLE
 
-    def randomize(self):
-        self.mode = random.choice(list(ANIMATION_MODE_DICT.values()))
-        self.color = random.choice(list(ANIMATION_COLOR_DICT.values()))
-        self.position = random.choice(list(ANIMATION_POS_DICT.values()))
+    def randomize(self) -> None:
+        self.mode: bytes = random.choice(list(ANIMATION_MODE_DICT.values()))
+        self.color: bytes = random.choice(list(ANIMATION_COLOR_DICT.values()))
+        self.position: bytes = random.choice(list(ANIMATION_POS_DICT.values()))
 
-    def display(self):
+    def display(self) -> None:
         _transmit(_write_file(self))
 
-    def bytestr(self):
+    def bytestr(self) -> bytes:
+        """
+        Returns the bytestring representation of this Animation (along with the necessary start of mode
+        character)
+        """
         return PacketCharacter.SOM + self.position + self.mode + self.color + _transcode(self.text)
 
 
-def _transmit(payload: bytes, addr: SignAddress = SignAddress.SIGN_ADDRESS_BROADCAST,
-              ttype=SignType.SIGN_TYPE_ALL_VERIFY, port: str = SERIAL_PORT) -> None:
+def _transmit(payload: bytes, addr: bytes = SignAddress.SIGN_ADDRESS_BROADCAST,
+              ttype: bytes = SignType.SIGN_TYPE_ALL_VERIFY, port: str = SERIAL_PORT) -> None:
     """
     Transmits a single packet
     :param payload: packet Command Code + Data Field to transmit
@@ -290,15 +306,15 @@ def _transmit(payload: bytes, addr: SignAddress = SignAddress.SIGN_ADDRESS_BROAD
     :param ttype: packet Type Code - describes the type of sign we're communicating to
     :return: None
     """
-    packet = (PacketCharacter.WAKEUP + PacketCharacter.SOH + ttype + addr + PacketCharacter.STX + payload +
-              PacketCharacter.EOT)
-    ser = Serial(port, 9600, timeout=10)
+    packet: bytes = (PacketCharacter.WAKEUP + PacketCharacter.SOH + ttype + addr + PacketCharacter.STX + payload +
+                     PacketCharacter.EOT)
+    ser: Serial = Serial(port, 9600, timeout=10)
     ser.write(packet)
     ser.close()
 
 
-def _transmit_multi(payloads: List[bytes], addr=SignAddress.SIGN_ADDRESS_BROADCAST,
-                    ttype=SignType.SIGN_TYPE_ALL_VERIFY) -> None:
+def _transmit_multi(payloads: List[bytes], addr: bytes = SignAddress.SIGN_ADDRESS_BROADCAST,
+                    ttype: bytes = SignType.SIGN_TYPE_ALL_VERIFY) -> None:
     """
     [UNTESTED]
     Transmits multiple packets (in nested packet format, as per 5.1.3 in the specification)
@@ -310,17 +326,27 @@ def _transmit_multi(payloads: List[bytes], addr=SignAddress.SIGN_ADDRESS_BROADCA
     """
     # This would be a cool one liner to form the packet BUT we need to have 100ms delays after <STX>'s
     # packet = WAKEUP + SOH + ttype + addr + STX + (ETX+STX).join(payloads) + ETX + EOT
-    ser = Serial(SERIAL_PORT, 9600, timeout=10)
+    ser: Serial = Serial(SERIAL_PORT, 9600, timeout=10)
     # Initial wakeup
     ser.write(PacketCharacter.WAKEUP + PacketCharacter.SOH + ttype + addr)
     for payload in payloads:
-        ser.write(STX)
+        ser.write(PacketCharacter.STX)
         # 100ms wait + python's performance delay should be adequate here
         time.sleep(.1)
-        ser.write(payload + ETX)
+        ser.write(payload + PacketCharacter.ETX)
     # Signal end of packet transmission
-    ser.write(EOT)
+    ser.write(PacketCharacter.EOT)
     ser.close()
+
+
+def _receive(timeout: int = 10) -> bytes:
+    """
+    Receives data from the serial sign (until reaching an EOT)
+    :param timeout: time to receive until we timeout
+    """
+    ser: Serial = Serial(SERIAL_PORT, 9600, timeout=timeout)
+    received: bytes = ser.read_until(PacketCharacter.EOT)
+    return received
 
 
 def _write_file(animations: Union[List[Animation], Animation], file: bytes = FileName.FILE_PRIORITY) -> bytes:
@@ -333,13 +359,13 @@ def _write_file(animations: Union[List[Animation], Animation], file: bytes = Fil
     """
     #   Many animations
     if isinstance(animations, list):
-        payload = CommandCode.COMMAND_WRITE_TEXT + file
+        payload: bytes = CommandCode.COMMAND_WRITE_TEXT + file
         for x in range(len(animations)):
-            animation = animations.pop(0)
+            animation: Animation = animations.pop(0)
             payload += animation.bytestr()
     #   One animation
     elif isinstance(animations, Animation):
-        payload = CommandCode.COMMAND_WRITE_TEXT + file + animations.bytestr()
+        payload: bytes = CommandCode.COMMAND_WRITE_TEXT + file + animations.bytestr()
     else:
         raise ValueError(f"Invalid argument given: animations='{animations}'")
     return payload
@@ -352,12 +378,10 @@ def _transcode(msg: str) -> bytes:
     :param msg: string to transcode
     :return: the msg's bytes representation
     """
-    print(f"Message before transcode:{msg}")
-    transcoded = b''
+    transcoded: bytes = b''
     for char in msg:
-        b = bytes(char, 'utf-8')
+        b: bytes = bytes(char, 'utf-8')
         transcoded += TextCharacterTranslationDict[b] if b in TextCharacterTranslationDict else b
-    print(f"Message after transcode:{transcoded}")
     return transcoded
 
 
@@ -384,11 +408,11 @@ def send_dots(dots_data: bytes, file: FileName = FileName.FILE_PRIORITY) -> None
     _transmit(CommandCode.COMMAND_WRITE_DOTS + file + dots_data)
 
 
-def soft_reset():
+def soft_reset() -> None:
     _transmit(CommandCode.COMMAND_WRITE_SPECIAL + WriteSpecialFunctionsLabel.SOFT_RESET)
 
 
-def send_animations(animations: List[Animation]):
+def send_animations(animations: Union[Animation, List[Animation]]) -> None:
     """
     Transmits the given list of animations to the betabrite sign
     :param animations: list of animations to transmit
@@ -411,31 +435,42 @@ def _cli_parse_animations_from_string(animation_string: str) -> List[Animation]:
 
 
 def _cli_parse_animations(animations: List[str]):
-    parsed_animations = []
+    parsed_animations: List[Animation] = []
     while len(animations) != 0:
-        animget = animations.pop(0).split(CLI_ANIMATION_PROPERTY_SEPARATOR)
-        animget[0] = animget[0] if animget[0] != "None" else ""
-        animget[1] = ANIMATION_MODE_DICT[animget[1]] if animget[1] != "None" else TextMode.MODE_AUTO
-        animget[2] = ANIMATION_COLOR_DICT[animget[2]] if animget[2] != "None" else TextColor.TEXT_COLOR_AUTO
-        animget[3] = ANIMATION_POS_DICT[animget[3]] if animget[3] != "None" else TextPosition.TEXT_POS_MIDDLE
+        animget: List[Union[str, bytes]] = animations.pop(0).split(CLI_ANIMATION_PROPERTY_SEPARATOR)
+        animget[0]: str = animget[0] if animget[0] != "None" else ""
+        animget[1]: Union[str, bytes] = ANIMATION_MODE_DICT[animget[1]] if animget[1] != "None" \
+            else TextMode.MODE_AUTO
+        animget[2]: Union[str, bytes] = ANIMATION_COLOR_DICT[animget[2]] if animget[2] != "None" \
+            else TextColor.TEXT_COLOR_AUTO
+        animget[3]: Union[str, bytes] = ANIMATION_POS_DICT[animget[3]] if animget[3] != "None" \
+            else TextPosition.TEXT_POS_MIDDLE
         parsed_animations.append(Animation(animget[0], animget[1], animget[2], animget[3]))
 
     return parsed_animations
 
 
+def read_general_information() -> bytes:
+    """
+    Reads general information bytes from the sign and returns it
+    """
+    _transmit(CommandCode.COMMAND_READ_SPECIAL + ReadSpecialFunctionLabel.READ_GENERAL_INFORMATION)
+    return _receive()
+
+
 def main() -> None:
     # pylint: disable=import-outside-toplevel
     import argparse
-    parser = argparse.ArgumentParser()
+    parser: argparse.ArgumentParser = argparse.ArgumentParser()
     parser.add_argument(
         "messages",
         help=f"messages to send, structured like: \n"
              f"TEXT,ANIMATION_MODE,ANIMATION_COLOR,ANIMATION_POSITION{CLI_TERMINAL_AND}[next message or EOL]",
         nargs='+')
-    args = parser.parse_args()
+    args: argparse.Namespace = parser.parse_args()
     # display_DOTS(None)
-    animations = ' '.join(args.messages)
-    animations = _cli_parse_animations_from_string(animations)
+    animations: str = ' '.join(args.messages)
+    animations: List[Animation] = _cli_parse_animations_from_string(animations)
     if CLI_ALLOW_TRANSMISSION:
         _transmit(_write_file(animations))
     else:

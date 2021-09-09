@@ -1,7 +1,13 @@
 import time
 import betabrite
 
-def mts(message: str, seconds: int=5):
+
+def mts(message: str, seconds: int = 5):
+    """
+    Sends message to display and then sleeps for seconds
+    :param message: Message to display
+    :param seconds: Seconds to sleep
+    """
     """
     Message, then sleep
     :param seconds: seconds to sleep after sending the message
@@ -10,7 +16,5 @@ def mts(message: str, seconds: int=5):
     betabrite.send_animations(betabrite.Animation(message))
     time.sleep(seconds)
 
-def read_general_information():
-    betabrite._transmit(COMMAND_READ_SPECIAL + READ_GENERAL_INFORMATION)
-    # wait for start of header
-    # betabrite.
+
+

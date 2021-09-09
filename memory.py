@@ -3,6 +3,7 @@ from enum import Enum
 from framecontrolbytes import *
 from betabrite import _transmit
 
+
 class MemoryConfigurationType(Enum):
     """
     Memory configuration settings
@@ -50,7 +51,7 @@ class Memory:
         [TESTED, WORKING]
         Clears the sign memory
         """
-        _transmit(COMMAND_WRITE_SPECIAL + MODIFY_MEMORY)
+        _transmit(CommandCode.COMMAND_WRITE_SPECIAL + WriteSpecialFunctionsLabel.MODIFY_MEMORY)
 
     def flash(self):
         """
@@ -58,25 +59,27 @@ class Memory:
         Flashes the memory map to the betabrite
         """
         # to be rewritten
-        _transmit(COMMAND_WRITE_SPECIAL + MODIFY_MEMORY + b''.join(
-            [b"%s%s%s%s%s" % (k, FILE_TYPE_TEXT, FILE_LOCKED, v.to_bytes(4, 'big'), TEXT_FILE_START_TIME_ALWAYS) for
+        _transmit(CommandCode.COMMAND_WRITE_SPECIAL + WriteSpecialFunctionsLabel.MODIFY_MEMORY + b''.join(
+            [b"%s%s%s%s%s" % (
+                k, FileType.TEXT, FileLock.LOCKED, v.to_bytes(4, 'big'),
+                TextFileStartTime.TEXT_FILE_START_TIME_ALWAYS) for
              k, v in self.map.items()]))
-
 
     @staticmethod
     def _memory_map_from_configuration(config: MemoryConfigurationType):
+        """
+        Writing this will be / is a pain in my ass
+        FileName is a normal Enum, unlike most, which are _GetterEnum
+        """
         if config == MemoryConfigurationType.FIRST_FILE_MAX:
-            return {k: TOTAL_MEMORY if k == FILE_NORMAL_RANGE[0] else 0 for k in FILE_NORMAL_RANGE}
+            return {k: TOTAL_MEMORY if k == FileName.FILE_1 else 0 for k in FileName}  # type: ignore
         elif config == MemoryConfigurationType.ALL_FILES_EQUAL:
-            return {k: TOTAL_MEMORY / len(FILE_NORMAL_RANGE) for k in FILE_NORMAL_RANGE}
+            return {k: TOTAL_MEMORY / len(FileName) for k in FileName}  # type: ignore
         else:
             raise Exception({
                 ValueError("Inappropriate argument: 'config'"),
                 MemoryConfigurationError("Inappropriate MemoryConfigurationType specified")
             })
-
-
-# Modify MemoryMap as described below and specify MemoryConfigurationType.CUSTOM in relevant functions for custom mapping
 
 
 class MemoryConfigurationError(Exception):
