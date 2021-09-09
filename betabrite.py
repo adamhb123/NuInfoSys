@@ -286,8 +286,11 @@ class Animation:
         self.color: bytes = random.choice(list(ANIMATION_COLOR_DICT.values()))
         self.position: bytes = random.choice(list(ANIMATION_POS_DICT.values()))
 
-    def display(self) -> None:
-        _transmit(_write_file(self))
+    def display(self, files: bytes = FileName.FILE_PRIORITY) -> None:
+        """
+        Sends this animation straight to the display
+        """
+        _transmit(_write_file(self, file=file))
 
     def bytestr(self) -> bytes:
         """
@@ -371,6 +374,30 @@ def _write_file(animations: Union[List[Animation], Animation], file: bytes = Fil
     return payload
 
 
+def send_dots(dots_data: bytes, width: Optional[Union[int, bytes]] = None, height: Optional[Union[int, bytes]] = None,
+              file: FileName = FileName.FILE_PRIORITY) -> None:
+    """
+    [UNTESTED]
+    Sends a SMALL DOTS PICTURE file to the sign, as per 6.4.1 in the specification
+    dots_data should be formatted as such:
+    2 hex bytes for height + 2 hex bytes for width + row bit pattern + carriage return
+    :param file: File label to write to
+    :param dots_data: DOTS data to transmit
+    :param width: width of DOTS image
+    :param height: height of DOTS image
+    :return: None
+    """
+    if width is None:
+        width: int = len(max(str(dots_data).split('\r')))
+    if height is None:
+        height: int = len(str(dots_data).split('\r'))
+    if isinstance(width, int):
+        width: bytes = width.to_bytes(2, "big")
+    if isinstance(height, int):
+        height: bytes = height.to_bytes(2, "big")
+    _transmit(CommandCode.COMMAND_WRITE_DOTS + file + height + width + dots_data + TextCharacter.CR)
+
+
 def _transcode(msg: str) -> bytes:
     """
     Transcodes the given msg to an appropriate bytes representation, needs to be expanded to account for all available
@@ -393,19 +420,6 @@ def set_time() -> None:
     """
     _transmit(CommandCode.COMMAND_WRITE_SPECIAL + WriteSpecialFunctionsLabel.SET_TIME_OF_DAY + bytes(
         datetime.now().strftime("%H%M"), 'utf-8'))
-
-
-def send_dots(dots_data: bytes, file: FileName = FileName.FILE_PRIORITY) -> None:
-    """
-    [UNTESTED]
-    Sends a SMALL DOTS PICTURE file to the sign, as per 6.4.1 in the specification
-    dots_data should be formatted as such:
-    2 hex bytes for height + 2 hex bytes for width + row bit pattern + carriage return
-    :param file: File label to write to
-    :param dots_data: DOTS data to transmit
-    :return: None
-    """
-    _transmit(CommandCode.COMMAND_WRITE_DOTS + file + dots_data)
 
 
 def soft_reset() -> None:
