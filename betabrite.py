@@ -33,10 +33,10 @@ DOTS_TEST_ARROW: bytes = b"00000080000\r00000088000\r08888888800\r08888888880\r0
 # Note that on the BetaBrite, position does not matter at all, so setting any of these does nothing
 # IT IS still required to be sent in the message packet, however
 ANIMATION_POS_DICT: Dict[str, bytes] = {
-    'middle': TextPosition.TEXT_POS_MIDDLE,
-    'top': TextPosition.TEXT_POS_TOP,
-    'bottom': TextPosition.TEXT_POS_BOTTOM,
-    'fill': TextPosition.TEXT_POS_FILL
+    'middle': TextPosition.MIDDLE,
+    'top': TextPosition.TOP,
+    'bottom': TextPosition.BOTTOM,
+    'fill': TextPosition.FILL
 }
 
 ANIMATION_COLOR_DICT: Dict[str, bytes] = {
@@ -264,13 +264,13 @@ class Animation:
                  text: str = "",
                  mode: Optional[Union[str, bytes]] = TextMode.AUTO,
                  color: Optional[Union[str, bytes]] = TextColor.AUTO,
-                 position: Optional[Union[str, bytes]] = TextPosition.TEXT_POS_MIDDLE) -> None:
+                 position: Optional[Union[str, bytes]] = TextPosition.MIDDLE) -> None:
         self.text = text
-        self.mode: Union[str, bytes] = self._validate_parameter(mode, ANIMATION_MODE_DICT, TextMode.MODE_AUTO)
+        self.mode: Union[str, bytes] = self._validate_parameter(mode, ANIMATION_MODE_DICT, TextMode.AUTO)
         self.color: Union[str, bytes] = self._validate_parameter(color, ANIMATION_COLOR_DICT,
                                                                  TextColor.AUTO)
         self.position: Union[str, bytes] = self._validate_parameter(position, ANIMATION_POS_DICT,
-                                                                    TextPosition.TEXT_POS_MIDDLE)
+                                                                    TextPosition.MIDDLE)
 
     def __str__(self) -> str:
         """
@@ -286,7 +286,7 @@ class Animation:
         self.text: str = ""
         self.mode: bytes = TextMode.AUTO
         self.color: bytes = TextColor.AUTO
-        self.position: bytes = TextPosition.TEXT_POS_MIDDLE
+        self.position: bytes = TextPosition.MIDDLE
 
     def randomize(self) -> None:
         self.mode: bytes = random.choice(list(ANIMATION_MODE_DICT.values()))
@@ -466,7 +466,7 @@ def _cli_parse_animations(animations: List[str]):
         animget[2]: Union[str, bytes] = ANIMATION_COLOR_DICT[animget[2]] if animget[2] != "None" \
             else TextColor.AUTO
         animget[3]: Union[str, bytes] = ANIMATION_POS_DICT[animget[3]] if animget[3] != "None" \
-            else TextPosition.TEXT_POS_MIDDLE
+            else TextPosition.MIDDLE
         parsed_animations.append(Animation(animget[0], animget[1], animget[2], animget[3]))
 
     return parsed_animations

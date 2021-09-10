@@ -214,10 +214,10 @@ class TextPosition(_GetterEnum):
     """
     Text positions (useless for the BetaBrite, but position needs to be included in packets for validity)
     """
-    TEXT_POS_MIDDLE: bytes = b" "  # center text vertically
-    TEXT_POS_TOP: bytes = b"\""  # text begins at top and at most n-1 lines
-    TEXT_POS_BOTTOM: bytes = b"&"  # text immediatly follows the TOP
-    TEXT_POS_FILL: bytes = b"0"  # center text verically and use all
+    MIDDLE: bytes = b" "  # center text vertically
+    TOP: bytes = b"\""  # text begins at top and at most n-1 lines
+    BOTTOM: bytes = b"&"  # text immediatly follows the TOP
+    FILL: bytes = b"0"  # center text verically and use all
 
 
 class TextMode(_GetterEnum):
