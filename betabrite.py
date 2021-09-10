@@ -359,7 +359,7 @@ def _receive(timeout: int = 10) -> bytes:
     return received
 
 
-def _write_file(animations: Union[List[Animation], Animation], file: bytes = FileName.FILE_PRIORITY) -> bytes:
+def _write_file(animations: Union[List[Animation], Animation], file: FileName = FileName.FILE_PRIORITY) -> bytes:
     """Writes the given animations (which could be a single animation) in the proper payload format
     If file is anything but FILE_PRIORITY, then memory needs to be allocated and dealt with before hand
     Maybe I'll add a memory configuration function that assigns memory per some sort of input specification
@@ -375,7 +375,7 @@ def _write_file(animations: Union[List[Animation], Animation], file: bytes = Fil
             payload += animation.bytes()
     #   One animation
     elif isinstance(animations, Animation):
-        payload: bytes = CommandCode.COMMAND_WRITE_TEXT + file + animations.bytes()
+        payload: bytes = CommandCode.COMMAND_WRITE_TEXT + file.value + animations.bytes()
     else:
         raise ValueError(f"Invalid argument given: animations='{animations}'")
     return payload
