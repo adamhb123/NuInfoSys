@@ -1,4 +1,5 @@
 import betabrite
+from framecontrolbytes import *
 from debug import mts
 
 '''
@@ -18,7 +19,7 @@ def test_send_dots() -> None:
                              b"08888888800\r" \
                              b"00000088000\r" \
                              b"00000080000\r"
-    betabrite.send_dots(DOTS_TEST_ARROW, 11, 7)
+    betabrite.send_dots(DOTS_TEST_ARROW, 11, 7, file=FileName.FILE_1)
 
 
 '''
