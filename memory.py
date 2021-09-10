@@ -1,7 +1,7 @@
 from typing import Dict, Union
 from enum import Enum
+import betabrite
 from framecontrolbytes import *
-from betabrite import _transmit
 
 
 class MemoryConfigurationType(Enum):
@@ -32,7 +32,7 @@ class Memory:
     """
 
     def __init__(self, memory_configuration: Union[
-            MemoryConfigurationType, Dict[bytes, int]] = MemoryConfigurationType.FIRST_FILE_MAX):
+        MemoryConfigurationType, Dict[bytes, int]] = MemoryConfigurationType.FIRST_FILE_MAX):
         self.map: Dict[bytes, int] = self._memory_map_from_configuration(memory_configuration)
         print(f"MAP CONFIGURATION: {self.map}")
 
@@ -51,7 +51,7 @@ class Memory:
         [TESTED, WORKING]
         Clears the sign memory
         """
-        _transmit(CommandCode.COMMAND_WRITE_SPECIAL + WriteSpecialFunctionsLabel.MODIFY_MEMORY)
+        betabrite._transmit(CommandCode.COMMAND_WRITE_SPECIAL + WriteSpecialFunctionsLabel.MODIFY_MEMORY)
 
     def flash(self):
         """
@@ -59,7 +59,7 @@ class Memory:
         Flashes the memory map to the betabrite
         """
         # to be rewritten
-        _transmit(CommandCode.COMMAND_WRITE_SPECIAL + WriteSpecialFunctionsLabel.MODIFY_MEMORY + b''.join(
+        betabrite._transmit(CommandCode.COMMAND_WRITE_SPECIAL + WriteSpecialFunctionsLabel.MODIFY_MEMORY + b''.join(
             [b"%s%s%s%s%s" % (
                 k, FileType.TEXT, FileLock.LOCKED, v.to_bytes(4, 'big'),
                 TextFileStartTime.TEXT_FILE_START_TIME_ALWAYS) for

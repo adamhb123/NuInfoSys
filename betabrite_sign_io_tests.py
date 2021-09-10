@@ -9,6 +9,9 @@ def test_read_general_information():
 
 
 def run_all_tests():
+    """
+    Runs all betabrite sign IO tests
+    """
     test_read_general_information()
 
 
