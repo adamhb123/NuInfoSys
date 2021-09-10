@@ -17,4 +17,3 @@ def mts(message: str, seconds: int = 5):
     time.sleep(seconds)
 
 
-

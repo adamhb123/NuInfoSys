@@ -233,7 +233,6 @@ class Animation:
     """
     Object designed to represent normal animations
     """
-
     @staticmethod
     def _validate_parameter(parameter: Union[str, bytes],
                             dictionary: Dict[str, bytes],
@@ -252,6 +251,12 @@ class Animation:
             print(f"Invalid parameter provided to 'Animation' class constructor: parameter='{parameter}', "
                   f"defaulted to '{default_on_fail}'")
             return default_on_fail
+    
+    @staticmethod
+    def generate_random():
+        anim: Animation =  Animation("Random animation", None, None, None)
+        anim.randomize()
+        return anim
 
     def __init__(self,
                  text: str = "",
