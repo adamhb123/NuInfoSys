@@ -371,7 +371,7 @@ def _write_file(animations: Union[List[Animation], Animation], file: FileName = 
     """
     #   Many animations
     if isinstance(animations, list):
-        payload: bytes = CommandCode.COMMAND_WRITE_TEXT + file
+        payload: bytes = CommandCode.COMMAND_WRITE_TEXT + file.value
         for x in range(len(animations)):
             animation: Animation = animations.pop(0)
             payload += animation.bytes()
@@ -457,7 +457,7 @@ def send_dots(dots_data: bytes, width: Optional[Union[int, bytes]] = None,
         width: bytes = width.to_bytes(2, "big")
     if isinstance(height, int):
         height: bytes = height.to_bytes(2, "big")
-    _transmit(CommandCode.COMMAND_WRITE_DOTS + file + height + width + dots_data + TextCharacter.CR)
+    _transmit(CommandCode.COMMAND_WRITE_DOTS + file.value + height + width + dots_data + TextCharacter.CR)
 
 
 def send_time() -> None:
