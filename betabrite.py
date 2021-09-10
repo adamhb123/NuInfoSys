@@ -320,6 +320,7 @@ def _transmit(payload: bytes, addr: bytes = SignAddress.SIGN_ADDRESS_BROADCAST,
     """
     packet: bytes = (PacketCharacter.WAKEUP + PacketCharacter.SOH + ttype + addr + PacketCharacter.STX + payload +
                      PacketCharacter.EOT)
+    print(packet)
     ser: Serial = Serial(port, 9600, timeout=10)
     ser.write(packet)
     ser.close()
