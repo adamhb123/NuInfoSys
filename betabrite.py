@@ -457,7 +457,7 @@ def send_dots(dots_data: bytes, width: Optional[Union[int, bytes]] = None,
         width: bytes = width.to_bytes(2, "big")
     if isinstance(height, int):
         height: bytes = height.to_bytes(2, "big")
-    _transmit(CommandCode.COMMAND_WRITE_DOTS + file.value + height + width + dots_data + TextCharacter.CR)
+    _transmit(CommandCode.COMMAND_WRITE_DOTS + file.value + height + width + dots_data)
 
 
 def send_time() -> None:
