@@ -32,7 +32,7 @@ class Memory:
     """
 
     def __init__(self, memory_configuration: Union[
-        MemoryConfigurationType, Dict[bytes, int]] = MemoryConfigurationType.FIRST_FILE_MAX):
+            MemoryConfigurationType, Dict[bytes, int]] = MemoryConfigurationType.FIRST_FILE_MAX):
         self.map: Dict[bytes, int] = self._memory_map_from_configuration(memory_configuration)
         print(f"MAP CONFIGURATION: {self.map}")
 

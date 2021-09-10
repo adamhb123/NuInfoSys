@@ -224,70 +224,70 @@ class TextMode(_GetterEnum):
     """
     Text modes / animations
     """
-    MODE_ROTATE: bytes = b"a"  # rotate right to left
-    MODE_HOLD: bytes = b"b"  # stationary
-    MODE_FLASH: bytes = b"c"  # stationary and flash
-    MODE_ROLLUP: bytes = b"e"  # push up old message by new message
-    MODE_ROLLDOWN: bytes = b"f"  # push down old message by new message
-    MODE_ROLLLEFT: bytes = b"g"  # push left old message by new message
-    MODE_ROLLRIGHT: bytes = b"h"  # push right old message by new message
-    MODE_WIPEUP: bytes = b"i"  # wipe up over old message with new
-    MODE_WIPEDOWN: bytes = b"j"  # wipe down over old message with new
-    MODE_WIPELEFT: bytes = b"k"  # wipe left over old message with new
-    MODE_WIPERIGHT: bytes = b"l"  # wipe right over old message with new
-    MODE_SCROLL: bytes = b"m"  # new message pushes the bottom line
+    ROTATE: bytes = b"a"  # rotate right to left
+    HOLD: bytes = b"b"  # stationary
+    FLASH: bytes = b"c"  # stationary and flash
+    ROLLUP: bytes = b"e"  # push up old message by new message
+    ROLLDOWN: bytes = b"f"  # push down old message by new message
+    ROLLLEFT: bytes = b"g"  # push left old message by new message
+    ROLLRIGHT: bytes = b"h"  # push right old message by new message
+    WIPEUP: bytes = b"i"  # wipe up over old message with new
+    WIPEDOWN: bytes = b"j"  # wipe down over old message with new
+    WIPELEFT: bytes = b"k"  # wipe left over old message with new
+    WIPERIGHT: bytes = b"l"  # wipe right over old message with new
+    SCROLL: bytes = b"m"  # new message pushes the bottom line
     # to the top of a 2 line sign
-    MODE_AUTO: bytes = b"o"  # random mode selected automatically
-    MODE_ROLLIN: bytes = b"p"  # new message pushed inward
-    MODE_ROLLOUT: bytes = b"q"  # new message pushed outward
-    MODE_WIPEIN: bytes = b"r"  # new message wiped over old inward
-    MODE_WIPEOUT: bytes = b"s"  # new message wiped over old outward
-    MODE_CMPRSROT: bytes = b"t"  # rotate right to left with text
+    AUTO: bytes = b"o"  # random mode selected automatically
+    ROLLIN: bytes = b"p"  # new message pushed inward
+    ROLLOUT: bytes = b"q"  # new message pushed outward
+    WIPEIN: bytes = b"r"  # new message wiped over old inward
+    WIPEOUT: bytes = b"s"  # new message wiped over old outward
+    CMPRSROT: bytes = b"t"  # rotate right to left with text
     # only half as wide
-    MODE_TWINKLE: bytes = b"n0"  # twinkle message
-    MODE_SPARKLE: bytes = b"n1"  # new message sparkles over the old
-    MODE_SNOW: bytes = b"n2"  # snow the new message
-    MODE_INTERLOCK: bytes = b"n3"  # new message interlocks over the old
-    MODE_SWITCH: bytes = b"n4"  # switch "off" the old message char by
+    TWINKLE: bytes = b"n0"  # twinkle message
+    SPARKLE: bytes = b"n1"  # new message sparkles over the old
+    SNOW: bytes = b"n2"  # snow the new message
+    INTERLOCK: bytes = b"n3"  # new message interlocks over the old
+    SWITCH: bytes = b"n4"  # switch "off" the old message char by
     # char.  new message switches "on"
     # char by char
-    MODE_SLIDE: bytes = b"n5"  # slide chars right to left one at a
+    SLIDE: bytes = b"n5"  # slide chars right to left one at a
     # time
-    MODE_SPRAY: bytes = b"n6"  # spray message right to left
-    MODE_STARBURST: bytes = b"n7"  # explode new message
-    MODE_WELCOME: bytes = b"n8"  # display a script "Welcome"
-    MODE_SLOTMACHINE: bytes = b"n9"  # display slot machine reels
-    MODE_NEWSFLASH: bytes = b"nA"  # display "Newsflash" animation
-    MODE_TRUMPET: bytes = b"nB"  # display a trumpet animation
-    MODE_THANKYOU: bytes = b"nS"  # display a script "Thank You"
-    MODE_NOSMOKING: bytes = b"nU"  # display "No Smoking" animation
-    MODE_DRINKDRIVE: bytes = b"nV"  # display "Don't Drink and Drive" animation
-    MODE_ANIMAL: bytes = b"nW"  # display a running animal
-    MODE_FISH: bytes = b"nW"  # display fish
+    SPRAY: bytes = b"n6"  # spray message right to left
+    STARBURST: bytes = b"n7"  # explode new message
+    WELCOME: bytes = b"n8"  # display a script "Welcome"
+    SLOTMACHINE: bytes = b"n9"  # display slot machine reels
+    NEWSFLASH: bytes = b"nA"  # display "Newsflash" animation
+    TRUMPET: bytes = b"nB"  # display a trumpet animation
+    THANKYOU: bytes = b"nS"  # display a script "Thank You"
+    NOSMOKING: bytes = b"nU"  # display "No Smoking" animation
+    DRINKDRIVE: bytes = b"nV"  # display "Don't Drink and Drive" animation
+    ANIMAL: bytes = b"nW"  # display a running animal
+    FISH: bytes = b"nW"  # display fish
     #   (BetaBrite alternate for ANIMAL)
-    MODE_FIREWORKS: bytes = b"nX"  # display fireworks animation
-    MODE_TURBOCAR: bytes = b"nY"  # display a car animation
-    MODE_BALLOONS: bytes = b"nY"  # display a balloon animation
+    FIREWORKS: bytes = b"nX"  # display fireworks animation
+    TURBOCAR: bytes = b"nY"  # display a car animation
+    BALLOONS: bytes = b"nY"  # display a balloon animation
     #   (BetaBrite alternate for TURBOCAR)
-    MODE_CHERRYBOMB: bytes = b"nZ"  # display a cherry bomb animation
+    CHERRYBOMB: bytes = b"nZ"  # display a cherry bomb animation
 
 
 class TextColor(_GetterEnum):
     """
     Text colors
     """
-    TEXT_COLOR_RED: bytes = b"\x1c\x31"  # set text color to red
-    TEXT_COLOR_GREEN: bytes = b"\x1c\x32"  # set text color to green
-    TEXT_COLOR_AMBER: bytes = b"\x1c\x33"  # set text color to amber
-    TEXT_COLOR_DIMRED: bytes = b"\x1c\x34"  # set text color to dim red
-    TEXT_COLOR_DIMGREEN: bytes = b"\x1c\x35"  # set text color to dim green
-    TEXT_COLOR_BROWN: bytes = b"\x1c\x36"  # set text color to brown
-    TEXT_COLOR_ORANGE: bytes = b"\x1c\x37"  # set text color to orange
-    TEXT_COLOR_YELLOW: bytes = b"\x1c\x38"  # set text color to yellow
-    TEXT_COLOR_RAINBOW1: bytes = b"\x1c\x39"  # set text color to rainbow all chars
-    TEXT_COLOR_RAINBOW2: bytes = b"\x1c\x41"  # set text color to rainbow indiv chars
-    TEXT_COLOR_MIX: bytes = b"\x1c\x42"  # each char gets a differnt color
-    TEXT_COLOR_AUTO: bytes = b"\x1c\x43"  # cycle through color modes
+    RED: bytes = b"\x1c\x31"  # set text color to red
+    GREEN: bytes = b"\x1c\x32"  # set text color to green
+    AMBER: bytes = b"\x1c\x33"  # set text color to amber
+    DIMRED: bytes = b"\x1c\x34"  # set text color to dim red
+    DIMGREEN: bytes = b"\x1c\x35"  # set text color to dim green
+    BROWN: bytes = b"\x1c\x36"  # set text color to brown
+    ORANGE: bytes = b"\x1c\x37"  # set text color to orange
+    YELLOW: bytes = b"\x1c\x38"  # set text color to yellow
+    RAINBOW1: bytes = b"\x1c\x39"  # set text color to rainbow all chars
+    RAINBOW2: bytes = b"\x1c\x41"  # set text color to rainbow indiv chars
+    MIX: bytes = b"\x1c\x42"  # each char gets a differnt color
+    AUTO: bytes = b"\x1c\x43"  # cycle through color modes
 
 
 class TextCharacter(_GetterEnum):

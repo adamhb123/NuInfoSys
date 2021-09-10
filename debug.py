@@ -13,7 +13,5 @@ def mts(message: str, seconds: int = 5):
     :param seconds: seconds to sleep after sending the message
     :return: None
     """
-    betabrite.send_animations(betabrite.Animation(message))
+    betabrite.send_animations(betabrite.Animation(message, mode=betabrite.TextMode.CMPRSROT))
     time.sleep(seconds)
-
-

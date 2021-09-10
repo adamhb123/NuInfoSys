@@ -40,58 +40,58 @@ ANIMATION_POS_DICT: Dict[str, bytes] = {
 }
 
 ANIMATION_COLOR_DICT: Dict[str, bytes] = {
-    'red': TextColor.TEXT_COLOR_RED,
-    'green': TextColor.TEXT_COLOR_GREEN,
-    'amber': TextColor.TEXT_COLOR_AMBER,
-    'dimred': TextColor.TEXT_COLOR_DIMRED,
-    'brown': TextColor.TEXT_COLOR_BROWN,
-    'orange': TextColor.TEXT_COLOR_ORANGE,
-    'yellow': TextColor.TEXT_COLOR_YELLOW,
-    'rainbow1': TextColor.TEXT_COLOR_RAINBOW1,
-    'rainbow2': TextColor.TEXT_COLOR_RAINBOW2,
-    'mix': TextColor.TEXT_COLOR_MIX,
-    'autocolor': TextColor.TEXT_COLOR_AUTO
+    'red': TextColor.RED,
+    'green': TextColor.GREEN,
+    'amber': TextColor.AMBER,
+    'dimred': TextColor.DIMRED,
+    'brown': TextColor.BROWN,
+    'orange': TextColor.ORANGE,
+    'yellow': TextColor.YELLOW,
+    'rainbow1': TextColor.RAINBOW1,
+    'rainbow2': TextColor.RAINBOW2,
+    'mix': TextColor.MIX,
+    'autocolor': TextColor.AUTO
 }
 
 ANIMATION_MODE_DICT: Dict[str, bytes] = {
-    'rotate': TextMode.MODE_ROTATE,
-    'hold': TextMode.MODE_HOLD,
-    'flash': TextMode.MODE_FLASH,
-    'rollup': TextMode.MODE_ROLLUP,
-    'rolldown': TextMode.MODE_ROLLDOWN,
-    'rollleft': TextMode.MODE_ROLLLEFT,
-    'rollright': TextMode.MODE_ROLLRIGHT,
-    'wipeup': TextMode.MODE_WIPEUP,
-    'wipedown': TextMode.MODE_WIPEDOWN,
-    'wipeleft': TextMode.MODE_WIPELEFT,
-    'wiperight': TextMode.MODE_WIPERIGHT,
-    'scroll': TextMode.MODE_SCROLL,
-    'automode': TextMode.MODE_AUTO,
-    'rollin': TextMode.MODE_ROLLIN,
-    'rollout': TextMode.MODE_ROLLOUT,
-    'wipein': TextMode.MODE_WIPEIN,
-    'wipeout': TextMode.MODE_WIPEOUT,
-    'cmprsrot': TextMode.MODE_CMPRSROT,
-    'twinkle': TextMode.MODE_TWINKLE,
-    'sparkle': TextMode.MODE_SPARKLE,
-    'snow': TextMode.MODE_SNOW,
-    'interlock': TextMode.MODE_INTERLOCK,
-    'switch': TextMode.MODE_SWITCH,
-    'spray': TextMode.MODE_SPRAY,
-    'starburst': TextMode.MODE_STARBURST,
-    'welcome': TextMode.MODE_WELCOME,
-    'slotmachine': TextMode.MODE_SLOTMACHINE,
-    'newsflash': TextMode.MODE_NEWSFLASH,
-    'trumpet': TextMode.MODE_TRUMPET,
-    'thankyou': TextMode.MODE_THANKYOU,
-    'nosmoking': TextMode.MODE_NOSMOKING,
-    'drinkdrive': TextMode.MODE_DRINKDRIVE,
-    'animal': TextMode.MODE_ANIMAL,
-    'fish': TextMode.MODE_FISH,
-    'fireworks': TextMode.MODE_FIREWORKS,
-    'turbocar': TextMode.MODE_TURBOCAR,
-    'balloons': TextMode.MODE_BALLOONS,
-    'cherrybomb': TextMode.MODE_CHERRYBOMB
+    'rotate': TextMode.ROTATE,
+    'hold': TextMode.HOLD,
+    'flash': TextMode.FLASH,
+    'rollup': TextMode.ROLLUP,
+    'rolldown': TextMode.ROLLDOWN,
+    'rollleft': TextMode.ROLLLEFT,
+    'rollright': TextMode.ROLLRIGHT,
+    'wipeup': TextMode.WIPEUP,
+    'wipedown': TextMode.WIPEDOWN,
+    'wipeleft': TextMode.WIPELEFT,
+    'wiperight': TextMode.WIPERIGHT,
+    'scroll': TextMode.SCROLL,
+    'automode': TextMode.AUTO,
+    'rollin': TextMode.ROLLIN,
+    'rollout': TextMode.ROLLOUT,
+    'wipein': TextMode.WIPEIN,
+    'wipeout': TextMode.WIPEOUT,
+    'cmprsrot': TextMode.CMPRSROT,
+    'twinkle': TextMode.TWINKLE,
+    'sparkle': TextMode.SPARKLE,
+    'snow': TextMode.SNOW,
+    'interlock': TextMode.INTERLOCK,
+    'switch': TextMode.SWITCH,
+    'spray': TextMode.SPRAY,
+    'starburst': TextMode.STARBURST,
+    'welcome': TextMode.WELCOME,
+    'slotmachine': TextMode.SLOTMACHINE,
+    'newsflash': TextMode.NEWSFLASH,
+    'trumpet': TextMode.TRUMPET,
+    'thankyou': TextMode.THANKYOU,
+    'nosmoking': TextMode.NOSMOKING,
+    'drinkdrive': TextMode.DRINKDRIVE,
+    'animal': TextMode.ANIMAL,
+    'fish': TextMode.FISH,
+    'fireworks': TextMode.FIREWORKS,
+    'turbocar': TextMode.TURBOCAR,
+    'balloons': TextMode.BALLOONS,
+    'cherrybomb': TextMode.CHERRYBOMB
 }
 # Some of these may be the same as their bytes counterparts, but whatever
 # https://www.utf8-chartable.de/unicode-utf8-table.pl
@@ -233,8 +233,15 @@ class Animation:
     """
     Object designed to represent normal animations
     """
+
     @staticmethod
-    def _validate_parameter(parameter: Union[str, bytes],
+    def generate_random() -> 'Animation':
+        anim: Animation = Animation("Random animation", None, None, None)
+        anim.randomize()
+        return anim
+
+    @staticmethod
+    def _validate_parameter(parameter: Optional[Union[str, bytes]],
                             dictionary: Dict[str, bytes],
                             default_on_fail: Union[str, bytes]) -> Union[str, bytes]:
         """
@@ -248,25 +255,20 @@ class Animation:
         elif parameter in dictionary.values():
             return parameter
         else:
-            print(f"Invalid parameter provided to 'Animation' class constructor: parameter='{parameter}', "
-                  f"defaulted to '{default_on_fail}'")
+            if parameter is not None:
+                print(f"Invalid parameter provided to 'Animation' class constructor: parameter='{parameter}', "
+                      f"defaulted to '{default_on_fail}'")
             return default_on_fail
-    
-    @staticmethod
-    def generate_random():
-        anim: Animation =  Animation("Random animation", None, None, None)
-        anim.randomize()
-        return anim
 
     def __init__(self,
                  text: str = "",
-                 mode: Union[str, bytes] = TextMode.MODE_AUTO,
-                 color: Union[str, bytes] = TextColor.TEXT_COLOR_AUTO,
-                 position: Union[str, bytes] = TextPosition.TEXT_POS_MIDDLE) -> None:
+                 mode: Optional[Union[str, bytes]] = TextMode.AUTO,
+                 color: Optional[Union[str, bytes]] = TextColor.AUTO,
+                 position: Optional[Union[str, bytes]] = TextPosition.TEXT_POS_MIDDLE) -> None:
         self.text = text
         self.mode: Union[str, bytes] = self._validate_parameter(mode, ANIMATION_MODE_DICT, TextMode.MODE_AUTO)
         self.color: Union[str, bytes] = self._validate_parameter(color, ANIMATION_COLOR_DICT,
-                                                                 TextColor.TEXT_COLOR_AUTO)
+                                                                 TextColor.AUTO)
         self.position: Union[str, bytes] = self._validate_parameter(position, ANIMATION_POS_DICT,
                                                                     TextPosition.TEXT_POS_MIDDLE)
 
@@ -282,8 +284,8 @@ class Animation:
 
     def reset(self) -> None:
         self.text: str = ""
-        self.mode: bytes = TextMode.MODE_AUTO
-        self.color: bytes = TextColor.TEXT_COLOR_AUTO
+        self.mode: bytes = TextMode.AUTO
+        self.color: bytes = TextColor.AUTO
         self.position: bytes = TextPosition.TEXT_POS_MIDDLE
 
     def randomize(self) -> None:
@@ -291,13 +293,13 @@ class Animation:
         self.color: bytes = random.choice(list(ANIMATION_COLOR_DICT.values()))
         self.position: bytes = random.choice(list(ANIMATION_POS_DICT.values()))
 
-    def display(self, files: bytes = FileName.FILE_PRIORITY) -> None:
+    def display(self, file: bytes = FileName.FILE_PRIORITY) -> None:
         """
-        Sends this animation straight to the display
+        Sends this animation straight ta the display
         """
         _transmit(_write_file(self, file=file))
 
-    def bytestr(self) -> bytes:
+    def bytes(self) -> bytes:
         """
         Returns the bytestring representation of this Animation (along with the necessary start of mode
         character)
@@ -370,16 +372,17 @@ def _write_file(animations: Union[List[Animation], Animation], file: bytes = Fil
         payload: bytes = CommandCode.COMMAND_WRITE_TEXT + file
         for x in range(len(animations)):
             animation: Animation = animations.pop(0)
-            payload += animation.bytestr()
+            payload += animation.bytes()
     #   One animation
     elif isinstance(animations, Animation):
-        payload: bytes = CommandCode.COMMAND_WRITE_TEXT + file + animations.bytestr()
+        payload: bytes = CommandCode.COMMAND_WRITE_TEXT + file + animations.bytes()
     else:
         raise ValueError(f"Invalid argument given: animations='{animations}'")
     return payload
 
 
-def send_dots(dots_data: bytes, width: Optional[Union[int, bytes]] = None, height: Optional[Union[int, bytes]] = None,
+def send_dots(dots_data: bytes, width: Optional[Union[int, bytes]] = None,
+              height: Optional[Union[int, bytes]] = None,
               file: FileName = FileName.FILE_PRIORITY) -> None:
     """
     [UNTESTED]
@@ -459,9 +462,9 @@ def _cli_parse_animations(animations: List[str]):
         animget: List[Union[str, bytes]] = animations.pop(0).split(CLI_ANIMATION_PROPERTY_SEPARATOR)
         animget[0]: str = animget[0] if animget[0] != "None" else ""
         animget[1]: Union[str, bytes] = ANIMATION_MODE_DICT[animget[1]] if animget[1] != "None" \
-            else TextMode.MODE_AUTO
+            else TextMode.AUTO
         animget[2]: Union[str, bytes] = ANIMATION_COLOR_DICT[animget[2]] if animget[2] != "None" \
-            else TextColor.TEXT_COLOR_AUTO
+            else TextColor.AUTO
         animget[3]: Union[str, bytes] = ANIMATION_POS_DICT[animget[3]] if animget[3] != "None" \
             else TextPosition.TEXT_POS_MIDDLE
         parsed_animations.append(Animation(animget[0], animget[1], animget[2], animget[3]))
@@ -493,8 +496,8 @@ def main() -> None:
     if CLI_ALLOW_TRANSMISSION:
         _transmit(_write_file(animations))
     else:
+        print(f"CLI transmission is disabled...")
         print(f"Packet: {animations}")
-        print(f"Write_file: {_write_file(animations)}")
 
 
 if __name__ == '__main__':
