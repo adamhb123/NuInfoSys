@@ -11,8 +11,15 @@ def test_send_dots() -> None:
     Tests the send_dots function
     :return: None
     """
-    DOTS_TEST_ARROW: bytes = b"00000080000\r00000088000\r08888888800\r08888888880\r08888888800\r00000088000\r00000080000\r"
-    betabrite.send_dots(DOTS_TEST_ARROW)
+    DOTS_TEST_ARROW: bytes = b"00000080000\r" \
+                             b"00000088000\r" \
+                             b"08888888800\r" \
+                             b"08888888880\r" \
+                             b"08888888800\r" \
+                             b"00000088000\r" \
+                             b"00000080000\r"
+    betabrite.send_dots(DOTS_TEST_ARROW, 11, 7)
+
 
 '''
 Read Method Tests
