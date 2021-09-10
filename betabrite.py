@@ -458,6 +458,7 @@ def send_dots(dots_data: bytes, width: Optional[Union[int, bytes]] = None,
         width: bytes = width.to_bytes(2, "big")
     if isinstance(height, int):
         height: bytes = height.to_bytes(2, "big")
+    print(f"FUCK: h={height} w={width}")
     _transmit(CommandCode.COMMAND_WRITE_DOTS + file.value + height + width + dots_data)
 
 
