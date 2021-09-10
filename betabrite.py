@@ -26,10 +26,6 @@ CLI_ALLOW_TRANSMISSION: bool = False
 CLI_TERMINAL_AND: str = "-"  # Animation separator
 CLI_ANIMATION_PROPERTY_SEPARATOR: str = ","  # Animation property separator
 SERIAL_PORT: str = "/dev/serial/by-id/usb-Prolific_Technology_Inc._USB-Serial_Controller_D-if00-port0"
-'''
-Nonconfigurables
-'''
-DOTS_TEST_ARROW: bytes = b"00000080000\r00000088000\r08888888800\r08888888880\r08888888800\r00000088000\r00000080000\r"
 # Note that on the BetaBrite, position does not matter at all, so setting any of these does nothing
 # IT IS still required to be sent in the message packet, however
 ANIMATION_POS_DICT: Dict[str, bytes] = {
@@ -307,6 +303,12 @@ class Animation:
         return PacketCharacter.SOM + self.position + self.mode + self.color + _transcode(self.text)
 
 
+'''
+[UTILITY]
+Utility Methods
+'''
+
+
 def _transmit(payload: bytes, addr: bytes = SignAddress.SIGN_ADDRESS_BROADCAST,
               ttype: bytes = SignType.SIGN_TYPE_ALL_VERIFY, port: str = SERIAL_PORT) -> None:
     """
@@ -381,31 +383,6 @@ def _write_file(animations: Union[List[Animation], Animation], file: FileName = 
     return payload
 
 
-def send_dots(dots_data: bytes, width: Optional[Union[int, bytes]] = None,
-              height: Optional[Union[int, bytes]] = None,
-              file: FileName = FileName.FILE_PRIORITY) -> None:
-    """
-    [UNTESTED]
-    Sends a SMALL DOTS PICTURE file to the sign, as per 6.4.1 in the specification
-    dots_data should be formatted as such:
-    2 hex bytes for height + 2 hex bytes for width + row bit pattern + carriage return
-    :param file: File label to write to
-    :param dots_data: DOTS data to transmit
-    :param width: width of DOTS image
-    :param height: height of DOTS image
-    :return: None
-    """
-    if width is None:
-        width: int = len(max(str(dots_data).split('\r')))
-    if height is None:
-        height: int = len(str(dots_data).split('\r'))
-    if isinstance(width, int):
-        width: bytes = width.to_bytes(2, "big")
-    if isinstance(height, int):
-        height: bytes = height.to_bytes(2, "big")
-    _transmit(CommandCode.COMMAND_WRITE_DOTS + file + height + width + dots_data + TextCharacter.CR)
-
-
 def _transcode(msg: str) -> bytes:
     """
     Transcodes the given msg to an appropriate bytes representation, needs to be expanded to account for all available
@@ -420,30 +397,10 @@ def _transcode(msg: str) -> bytes:
     return transcoded
 
 
-def set_time() -> None:
-    """
-    [UNTESTED]
-    Sets the time of day (in 24-hour format) in the sign, in the format HhMm
-    :return: None
-    """
-    _transmit(CommandCode.COMMAND_WRITE_SPECIAL + WriteSpecialFunctionsLabel.SET_TIME_OF_DAY + bytes(
-        datetime.now().strftime("%H%M"), 'utf-8'))
-
-
-def soft_reset() -> None:
-    _transmit(CommandCode.COMMAND_WRITE_SPECIAL + WriteSpecialFunctionsLabel.SOFT_RESET)
-
-
-def send_animations(animations: Union[Animation, List[Animation]]) -> None:
-    """
-    Transmits the given list of animations to the betabrite sign
-    :param animations: list of animations to transmit
-    :return: None
-    """
-    #   If you want to send just one animation, you can use its 'display()' method
-    # _transmit(SERIAL_PORT, _write_file(animations, file=FILE_NORMAL_RANGE[0]))
-    # To transmit to a non
-    _transmit(_write_file(animations, file=FileName.FILE_PRIORITY))
+'''
+[CLI]
+CLI Methods
+'''
 
 
 def _cli_parse_animations_from_string(animation_string: str) -> List[Animation]:
@@ -472,15 +429,243 @@ def _cli_parse_animations(animations: List[str]):
     return parsed_animations
 
 
+'''
+[SIGN IO]
+Send Methods
+'''
+
+
+def send_dots(dots_data: bytes, width: Optional[Union[int, bytes]] = None,
+              height: Optional[Union[int, bytes]] = None,
+              file: FileName = FileName.FILE_PRIORITY) -> None:
+    """
+    [UNTESTED]
+    Sends a SMALL DOTS PICTURE file to the sign, as per 6.4.1 in the specification
+    dots_data should be formatted as such:
+    2 hex bytes for height + 2 hex bytes for width + row bit pattern + carriage return
+    :param file: File label to write to
+    :param dots_data: DOTS data to transmit
+    :param width: width of DOTS image
+    :param height: height of DOTS image
+    :return: None
+    """
+    if width is None:
+        width: int = len(max(str(dots_data).split('\r')))
+    if height is None:
+        height: int = len(str(dots_data).split('\r'))
+    if isinstance(width, int):
+        width: bytes = width.to_bytes(2, "big")
+    if isinstance(height, int):
+        height: bytes = height.to_bytes(2, "big")
+    _transmit(CommandCode.COMMAND_WRITE_DOTS + file + height + width + dots_data + TextCharacter.CR)
+
+
+def send_time() -> None:
+    """
+    [UNTESTED]
+    Sends the time of day (in 24-hour format) to the sign, in the format HhMm
+    :return: None
+    """
+    _transmit(CommandCode.COMMAND_WRITE_SPECIAL + WriteSpecialFunctionsLabel.SET_TIME_OF_DAY + bytes(
+        datetime.now().strftime("%H%M"), 'utf-8'))
+
+
+def send_soft_reset() -> None:
+    _transmit(CommandCode.COMMAND_WRITE_SPECIAL + WriteSpecialFunctionsLabel.SOFT_RESET)
+
+
+def send_animations(animations: Union[Animation, List[Animation]]) -> None:
+    """
+    Transmits the given list of animations to the betabrite sign
+    :param animations: list of animations to transmit
+    :return: None
+    """
+    #   If you want to send just one animation, you can use its 'display()' method
+    # _transmit(SERIAL_PORT, _write_file(animations, file=FILE_NORMAL_RANGE[0]))
+    # To transmit to a non
+    _transmit(_write_file(animations, file=FileName.FILE_PRIORITY))
+
+
+'''
+[SIGN IO]
+Read Methods
+'''
+
+
+def read_time() -> bytes:
+    """
+    [UNTESTED]
+    Reads time bytes from the sign
+    :return: Time bytes read from the sign
+    """
+    _transmit(CommandCode.COMMAND_READ_SPECIAL + ReadSpecialFunctionLabel.TIME_OF_DAY)
+    return _receive()
+
+
+def read_speaker_status() -> bytes:
+    """
+    [UNTESTED]
+    Reads speaker status from the sign
+    :return: speaker status bytes read from the sign
+    """
+    _transmit(CommandCode.COMMAND_READ_SPECIAL + ReadSpecialFunctionLabel.SPEAKER_STATUS)
+    return _receive()
+
+
 def read_general_information() -> bytes:
     """
-    Reads general information bytes from the sign and returns it
+    [TESTED]
+    Reads general information bytes from the sign
+    :return: General information bytes from the sign
     """
-    _transmit(CommandCode.COMMAND_READ_SPECIAL + ReadSpecialFunctionLabel.READ_GENERAL_INFORMATION)
+    _transmit(CommandCode.COMMAND_READ_SPECIAL + ReadSpecialFunctionLabel.GENERAL_INFORMATION)
+    return _receive()
+
+
+def read_memory_pool_size() -> bytes:
+    """
+    [UNTESTED]
+    Reads memory pool size bytes from the sign
+    :return: Memory pool size bytes from the sign
+    """
+    _transmit(CommandCode.COMMAND_READ_SPECIAL + ReadSpecialFunctionLabel.MEMORY_POOL_SIZE)
+    return _receive()
+
+
+def read_memory_configuration() -> bytes:
+    """
+    [UNTESTED]
+    Reads memory configuration bytes from the sign
+    :return: Memory configuration bytes from the sign
+    """
+    _transmit(CommandCode.COMMAND_READ_SPECIAL + ReadSpecialFunctionLabel.MEMORY_CONFIGURATION)
+    return _receive()
+
+
+def read_memory_dump() -> bytes:
+    """
+    [UNTESTED]
+    Reads memory dump bytes from the sign
+    :return: Memory dump bytes from the sign
+    """
+    _transmit(CommandCode.COMMAND_READ_SPECIAL + ReadSpecialFunctionLabel.MEMORY_DUMP)
+    return _receive()
+
+
+def read_day_of_week() -> bytes:
+    """
+    [UNTESTED]
+    Reads day of week bytes from the sign
+    :return: Day of week bytes from the sign
+    """
+    _transmit(CommandCode.COMMAND_READ_SPECIAL + ReadSpecialFunctionLabel.DAY_OF_WEEK)
+    return _receive()
+
+
+def read_time_format() -> bytes:
+    """
+    [UNTESTED]
+    Reads time format bytes from the sign
+    :return: Time format bytes from the sign
+    """
+    _transmit(CommandCode.COMMAND_READ_SPECIAL + ReadSpecialFunctionLabel.TIME_FORMAT)
+    return _receive()
+
+
+def read_run_time_table() -> bytes:
+    """
+    [UNTESTED]
+    Reads run time table bytes from the sign
+    :return: Run time table bytes from the sign
+    """
+    _transmit(CommandCode.COMMAND_READ_SPECIAL + ReadSpecialFunctionLabel.RUN_TIME_TABLE)
+    return _receive()
+
+
+def read_serial_error_status_register() -> bytes:
+    """
+    [UNTESTED]
+    Reads serial error status register table bytes from the sign
+    :return: Serial error status register from the sign
+    """
+    _transmit(CommandCode.COMMAND_READ_SPECIAL + ReadSpecialFunctionLabel.SERIAL_ERROR_STATUS_REGISTER)
+    return _receive()
+
+
+def read_network_query() -> bytes:
+    """
+    [UNTESTED]
+    Reads network query bytes from the sign
+    :return: Network query from the sign
+    """
+    _transmit(CommandCode.COMMAND_READ_SPECIAL + ReadSpecialFunctionLabel.NETWORK_QUERY)
+    return _receive()
+
+
+def read_run_sequence() -> bytes:
+    """
+    [UNTESTED]
+    Reads serial error status register table bytes from the sign
+    :return: Serial error status register from the sign
+    """
+    _transmit(CommandCode.COMMAND_READ_SPECIAL + ReadSpecialFunctionLabel.RUN_SEQUENCE)
+    return _receive()
+
+
+def read_run_day_table() -> bytes:
+    """
+    [UNTESTED]
+    Reads run day table bytes from the sign
+    :return: Run day table from the sign
+    """
+    _transmit(CommandCode.COMMAND_READ_SPECIAL + ReadSpecialFunctionLabel.RUN_DAY_TABLE)
+    return _receive()
+
+
+def read_counter() -> bytes:
+    """
+    [UNTESTED]
+    Reads counter bytes from the sign
+    :return: Counter bytes from the sign
+    """
+    _transmit(CommandCode.COMMAND_READ_SPECIAL + ReadSpecialFunctionLabel.COUNTER)
+    return _receive()
+
+
+def read_large_dots_picture_memory_configuration() -> bytes:
+    """
+    [UNTESTED]
+    Reads large dots picture memory configuration bytes from the sign
+    :return: Large dots picture memory configuration bytes from the sign
+    """
+    _transmit(CommandCode.COMMAND_READ_SPECIAL + ReadSpecialFunctionLabel.LARGE_DOTS_PICTURE_MEMORY_CONFIGURATION)
+    return _receive()
+
+
+def read_date() -> bytes:
+    """
+    [UNTESTED]
+    Reads date bytes from the sign
+    :return: Date bytes from the sign
+    """
+    _transmit(CommandCode.COMMAND_READ_SPECIAL + ReadSpecialFunctionLabel.LARGE_DOTS_PICTURE_MEMORY_CONFIGURATION)
+    return _receive()
+
+
+def read_temperature_offset() -> bytes:
+    """
+    [UNTESTED]
+    Reads temperature offset bytes from the sign
+    :return: Temperature offset bytes from the sign
+    """
+    _transmit(CommandCode.COMMAND_READ_SPECIAL + ReadSpecialFunctionLabel.TEMPERATURE_OFFSET)
     return _receive()
 
 
 def main() -> None:
+    """
+    CLI Entrypoint
+    """
     # pylint: disable=import-outside-toplevel
     import argparse
     parser: argparse.ArgumentParser = argparse.ArgumentParser()

@@ -1,10 +1,28 @@
 import betabrite
 from debug import mts
 
+'''
+Send Method Tests
+'''
 
-def test_read_general_information():
+
+def test_send_dots() -> None:
+    """
+    Tests the send_dots function
+    :return: None
+    """
+    DOTS_TEST_ARROW: bytes = b"00000080000\r00000088000\r08888888800\r08888888880\r08888888800\r00000088000\r00000080000\r"
+    betabrite.send_dots(DOTS_TEST_ARROW)
+
+'''
+Read Method Tests
+'''
+
+
+def test_read_general_information() -> None:
     """
     Tests the read_general_info function
+    :return: None
     """
     mts("Testing function: read_general_information", console_out=True)
     result = betabrite.read_general_information()
@@ -15,6 +33,9 @@ def run_all_tests():
     """
     Runs all betabrite sign IO tests
     """
+    mts("Testing send methods")
+    test_send_dots()
+    mts("Testing read methods")
     test_read_general_information()
 
 

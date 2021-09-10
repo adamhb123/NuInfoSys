@@ -184,22 +184,24 @@ class TextFileStartTime(_GetterEnum):
 
 
 class ReadSpecialFunctionLabel(_GetterEnum):
-    READ_TIME: bytes = b" "
-    READ_SPEAKER_STATUS: bytes = b"!"
-    READ_GENERAL_INFORMATION: bytes = b"\""
-    READ_MEMORY_POOL_SIZE: bytes = b"#"
-    READ_MEMORY_CONFIGURATION: bytes = b"$"
+    TIME_OF_DAY: bytes = b" "
+    SPEAKER_STATUS: bytes = b"!"
+    GENERAL_INFORMATION: bytes = b"\""
+    MEMORY_POOL_SIZE: bytes = b"#"
+    MEMORY_CONFIGURATION: bytes = b"$"
     MEMORY_DUMP: bytes = b"%"
-    READ_DAY_OF_WEEK: bytes = b"&"
-    READ_TIME_FORMAT: bytes = b"'"
-    READ_RUN_TIME_TABLE: bytes = b")"
-    READ_SERIAL_ERROR_STATUS_REGISTER: bytes = b"*"
+    DAY_OF_WEEK: bytes = b"&"
+    TIME_FORMAT: bytes = b"'"
+    RUN_TIME_TABLE: bytes = b")"
+    SERIAL_ERROR_STATUS_REGISTER: bytes = b"*"
     NETWORK_QUERY: bytes = b"-"
-    READ_RUN_SEQUENCE: bytes = b"."
-    READ_RUN_DAY_TABLE: bytes = b"2"
-    READ_COUNTER: bytes = b"5"
-    READ_LARGE_DOTS_PICTURE_MEMORY_CONFIGURATION = b"8"
-    READ_DATE = b";"
+    RUN_SEQUENCE: bytes = b"."
+    RUN_DAY_TABLE: bytes = b"2"
+    COUNTER: bytes = b"5"
+    LARGE_DOTS_PICTURE_MEMORY_CONFIGURATION = b"8"
+    DATE = b";"
+    TEMPERATURE_OFFSET = b"T"
+
 
 
 FileName: Enum = Enum(
