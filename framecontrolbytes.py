@@ -178,9 +178,9 @@ class TextFileStartTime(_GetterEnum):
     """
     Might change this later TODO: guh
     """
-    TEXT_FILE_START_TIME_ALLDAY: bytes = b"FD"
-    TEXT_FILE_START_TIME_NEVER: bytes = b"FE"
-    TEXT_FILE_START_TIME_ALWAYS: bytes = b"FF"
+    ALLDAY: bytes = b"FD"
+    NEVER: bytes = b"FE"
+    ALWAYS: bytes = b"FF"
 
 
 class ReadSpecialFunctionLabel(_GetterEnum):
@@ -201,7 +201,6 @@ class ReadSpecialFunctionLabel(_GetterEnum):
     LARGE_DOTS_PICTURE_MEMORY_CONFIGURATION = b"8"
     DATE = b";"
     TEMPERATURE_OFFSET = b"T"
-
 
 
 FileName: Enum = Enum(
