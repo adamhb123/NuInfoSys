@@ -384,7 +384,7 @@ def _write_file(animations: Union[List[Animation], Animation], file: FileName = 
     return payload
 
 
-def _transcode(msg: Union[str, bytes]) -> bytes:
+def _transcode(msg: str) -> bytes:
     """
     Transcodes the given msg to an appropriate bytes representation, needs to be expanded to account for all available
     characters
@@ -393,7 +393,7 @@ def _transcode(msg: Union[str, bytes]) -> bytes:
     """
     transcoded: bytes = b''
     for char in msg:
-        b: Union[str, bytes] = bytes(char, 'utf-8') if isinstance(char, str) else char
+        b: bytes = bytes(char, 'utf-8')
         transcoded += TextCharacterTranslationDict[b] if b in TextCharacterTranslationDict else b
     return transcoded
 
@@ -459,7 +459,7 @@ def send_dots(dots_data: bytes, width: Optional[Union[int, bytes]] = None,
     if isinstance(height, int):
         height: bytes = height.to_bytes(2, "big")
     print(f"FUCK: h={height} w={width}")
-    dots_data = _transcode(dots_data)
+    dots_data.replace(b"\r", TextCharacter.CR)
     _transmit(CommandCode.COMMAND_WRITE_DOTS + file.value + height + width + dots_data)
 
 
