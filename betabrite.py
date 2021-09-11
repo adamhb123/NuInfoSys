@@ -393,7 +393,7 @@ def _transcode(msg: Union[str, bytes]) -> bytes:
     """
     transcoded: bytes = b''
     for char in msg:
-        b: bytes = bytes(char, 'utf-8')
+        b: Union[str, bytes] = bytes(char, 'utf-8') if isinstance(char, str) else char
         transcoded += TextCharacterTranslationDict[b] if b in TextCharacterTranslationDict else b
     return transcoded
 
