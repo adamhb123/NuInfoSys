@@ -19,7 +19,7 @@ def test_send_dots() -> None:
                              b"01111111100\r" \
                              b"00000011000\r" \
                              b"00000010000\r"
-    betabrite.send_dots(DOTS_TEST_ARROW, 11, 7, file=FileName.FILE_PRIORITY)
+    betabrite.send_dots(DOTS_TEST_ARROW, 11, 7, file=FileName.FILE_1)
 
 
 '''
