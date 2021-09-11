@@ -32,8 +32,8 @@ class Memory:
     """
 
     def __init__(self, memory_configuration: Union[
-        MemoryConfigurationType, Dict[bytes, int]] = MemoryConfigurationType.FIRST_FILE_MAX):
-        self.map: Dict[bytes, int] = self._memory_map_from_configuration(memory_configuration)
+            MemoryConfigurationType, Dict[FileName, int]] = MemoryConfigurationType.FIRST_FILE_MAX):
+        self.map: Dict[FileName, int] = self._memory_map_from_configuration(memory_configuration)
         print(f"MAP CONFIGURATION: {self.map}")
 
     def __repr__(self):
@@ -41,6 +41,22 @@ class Memory:
 
     def __str__(self):
         return self.map.__str__()
+
+    @staticmethod
+    def _memory_map_from_configuration(config: MemoryConfigurationType) -> Dict[FileName, int]:
+        """
+        Writing this will be / is a pain in my ass
+        FileName is a normal Enum, unlike most, which are _GetterEnum
+        """
+        if config == MemoryConfigurationType.FIRST_FILE_MAX:
+            return {k: TOTAL_MEMORY if k == FileName.FILE_1 else 0 for k in FileName}  # type: ignore
+        elif config == MemoryConfigurationType.ALL_FILES_EQUAL:
+            return {k: TOTAL_MEMORY / len(FileName) for k in FileName}  # type: ignore
+        else:
+            raise Exception({
+                ValueError("Inappropriate argument: 'config'"),
+                MemoryConfigurationError("Inappropriate MemoryConfigurationType specified")
+            })
 
     def bytes(self) -> bytes:
         return b''.join([k for k, v in self.map.items()])
@@ -64,22 +80,6 @@ class Memory:
                 k, FileType.TEXT, FileLock.LOCKED, v.to_bytes(4, 'big'),
                 TextFileStartTime.TEXT_FILE_START_TIME_ALWAYS) for
              k, v in self.map.items()]))
-
-    @staticmethod
-    def _memory_map_from_configuration(config: MemoryConfigurationType):
-        """
-        Writing this will be / is a pain in my ass
-        FileName is a normal Enum, unlike most, which are _GetterEnum
-        """
-        if config == MemoryConfigurationType.FIRST_FILE_MAX:
-            return {k: TOTAL_MEMORY if k == FileName.FILE_1 else 0 for k in FileName}  # type: ignore
-        elif config == MemoryConfigurationType.ALL_FILES_EQUAL:
-            return {k: TOTAL_MEMORY / len(FileName) for k in FileName}  # type: ignore
-        else:
-            raise Exception({
-                ValueError("Inappropriate argument: 'config'"),
-                MemoryConfigurationError("Inappropriate MemoryConfigurationType specified")
-            })
 
 
 class MemoryConfigurationError(Exception):
