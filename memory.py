@@ -58,8 +58,8 @@ class Memory:
                 MemoryConfigurationError("Inappropriate MemoryConfigurationType specified")
             })
 
-    def bytes(self) -> bytes:
-        return b''.join([k.value for k in self.map.keys()])
+    #def bytes(self) -> bytes:
+        #return b''.join([k.value for k in self.map.keys()])
 
     @staticmethod
     def clear():
@@ -77,7 +77,7 @@ class Memory:
         # to be rewritten
         betabrite._transmit(CommandCode.COMMAND_WRITE_SPECIAL + WriteSpecialFunctionsLabel.MODIFY_MEMORY + b''.join(
             [b"%s%s%s%s%s" % (
-                k, FileType.TEXT, FileLock.LOCKED, v.to_bytes(4, 'big'),
+                k.value, FileType.TEXT, FileLock.LOCKED, v.to_bytes(4, 'big'),
                 TextFileStartTime.TEXT_FILE_START_TIME_ALWAYS) for
              k, v in self.map.items()]))
 
