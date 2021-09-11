@@ -12,13 +12,13 @@ def test_send_dots() -> None:
     Tests the send_dots function
     :return: None
     """
-    DOTS_TEST_ARROW: bytes = b"00000080000\r" \
-                             b"00000088000\r" \
-                             b"08888888800\r" \
-                             b"08888888880\r" \
-                             b"08888888800\r" \
-                             b"00000088000\r" \
-                             b"00000080000\r"
+    DOTS_TEST_ARROW: bytes = b"00000010000\r" \
+                             b"00000011000\r" \
+                             b"01111111100\r" \
+                             b"01111111110\r" \
+                             b"01111111100\r" \
+                             b"00000011000\r" \
+                             b"00000010000\r"
     betabrite.send_dots(DOTS_TEST_ARROW, 11, 7, file=FileName.FILE_PRIORITY)
 
 
