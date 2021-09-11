@@ -455,9 +455,9 @@ def send_dots(dots_data: bytes, width: Optional[Union[int, bytes]] = None,
     if height is None:
         height: int = len(str(dots_data).split('\r'))
     if isinstance(width, int):
-        width: bytes = width.to_bytes(2, "big")
+        width: bytes = width.to_bytes(1, "big")
     if isinstance(height, int):
-        height: bytes = height.to_bytes(2, "big")
+        height: bytes = height.to_bytes(1, "big")
     print(f"FUCK: h={height} w={width}")
     dots_data.replace(b"\r", TextCharacter.CR)
     _transmit(CommandCode.COMMAND_WRITE_DOTS + file.value + height + width + dots_data)
