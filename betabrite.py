@@ -480,16 +480,17 @@ def send_soft_reset() -> None:
     _transmit(CommandCode.COMMAND_WRITE_SPECIAL + WriteSpecialFunctionsLabel.SOFT_RESET)
 
 
-def send_animations(animations: Union[Animation, List[Animation]]) -> None:
+def send_animations(animations: Union[Animation, List[Animation]], file: FileName = FileName.FILE_PRIORITY) -> None:
     """
     Transmits the given list of animations to the betabrite sign
     :param animations: list of animations to transmit
+    :param file: file to send animations to
     :return: None
     """
     #   If you want to send just one animation, you can use its 'display()' method
     # _transmit(SERIAL_PORT, _write_file(animations, file=FILE_NORMAL_RANGE[0]))
     # To transmit to a non
-    _transmit(_write_file(animations, file=FileName.FILE_PRIORITY))
+    _transmit(_write_file(animations, file=file))
 
 
 '''
