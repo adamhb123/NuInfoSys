@@ -18,7 +18,7 @@ class MemoryConfigurationType(Enum):
 
 class Memory:
     """
-    Handles memory, constructing it as described
+    Handles memory allocation
 
     Here is what a custom memory map would look look like
 
@@ -59,7 +59,7 @@ class Memory:
             })
 
     def bytes(self) -> bytes:
-        return b''.join([k for k, v in self.map.items()])
+        return b''.join([k.value for k in self.map.keys()])
 
     @staticmethod
     def clear():
