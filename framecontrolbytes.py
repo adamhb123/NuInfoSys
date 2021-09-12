@@ -124,6 +124,8 @@ class WriteSpecialFunctionsLabel(_GetterEnum):
     SET_COUNTER: bytes = b"5"  # I don't believe the BetaBrite has a counter, but am including this just in case
     # ^ check out 6.2.1 table 15 - "Set Counter" for details
     SET_SERIAL_ADDRESS: bytes = b"7"
+    SET_LARGE_DOTS_PICTURE_MEMORY_CONFIGURATION: bytes = b"8"
+    APPEND_TO_LARGE_DOTS_PICTURE_FILE_MEMORY_CONFIGURATION: bytes = b"9"
 
 
 class DateTime(_GetterEnum):

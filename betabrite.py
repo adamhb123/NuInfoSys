@@ -225,6 +225,13 @@ TextCharacterTranslationDict: Dict[bytes, bytes] = {
 '''
 
 
+class DotsPictureMemoryConfiguration:
+    def __init__(self, filename: Union[str, bytes], width: Union[int, bytes], height: Union[int, bytes]):
+        self.filename = filename[:9]
+        self.width = width  # TODO: int2byets
+        self.height = height  # TODO: int2bytes
+
+
 class Animation:
     """
     Object designed to represent normal animations
@@ -479,6 +486,29 @@ def send_soft_reset() -> None:
 
     """
     _transmit(CommandCode.COMMAND_WRITE_SPECIAL + WriteSpecialFunctionsLabel.SOFT_RESET)
+
+
+def send_set_large_dots_picture_memory_configuration_single(filename: Union[str, bytes], width: Union[int, bytes],
+                                                            height: Union[int, bytes]) -> None:
+    if isinstance(filename, str):
+        filename: bytes = bytes(filename, "utf-8")
+    if len(filename) < 9:
+        filename += b' ' * (9 - len(filename))
+    elif len(filename) > 9:
+        raise ValueError(
+            "Invalid filename provided to send_set_large_dots_picture_memory_configuration: filename too long")
+    if isinstance(width, int):
+        width: bytes = width.to_bytes(2, 'big')
+    if isinstance(height, int):
+        height: bytes = height.to_bytes(2, 'big')
+
+    _transmit(CommandCode.COMMAND_WRITE_SPECIAL + WriteSpecialFunctionsLabel.SET_LARGE_DOTS_PICTURE_MEMORY_CONFIGURATION
+              + filename + height + width + b"0000")
+
+
+def send_set_large_dots_picture_memory_configuration_all():
+    for fn in FileName:  # type: ignore
+        send_set_large_dots_picture_memory_configuration_single(fn.name[:9], )
 
 
 def send_animations(animations: Union[Animation, List[Animation]], file: FileName = FileName.FILE_PRIORITY) -> None:
