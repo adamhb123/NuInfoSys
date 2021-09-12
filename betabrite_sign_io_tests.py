@@ -185,12 +185,12 @@ def run_all_tests():
     mts("Testing send methods")
     [x() for x in {test_send_dots}]
     mts("Testing read methods")
-    [x() for x in {test_read_time, test_read_speaker_status, test_read_general_information,
-                   test_read_memory_pool_size, test_read_memory_configuration, test_read_memory_dump,
-                   test_read_day_of_week, test_read_time_format, test_read_run_time_table,
-                   test_read_serial_error_status_register, test_read_network_query, test_read_run_sequence,
-                   test_read_run_day_table, test_read_counter, test_read_large_dots_picture_memory_configuration,
-                   test_read_date, test_read_temperature_offset}]
+    read_methods = (test_read_time, test_read_speaker_status, test_read_general_information,
+                    test_read_memory_pool_size, test_read_memory_configuration, test_read_memory_dump,
+                    test_read_day_of_week, test_read_time_format, test_read_run_time_table,
+                    test_read_serial_error_status_register, test_read_network_query, test_read_run_sequence,
+                    test_read_run_day_table, test_read_counter, test_read_large_dots_picture_memory_configuration,
+                    test_read_date, test_read_temperature_offset)
     test_read_general_information()
 
 
