@@ -511,17 +511,21 @@ def send_set_large_dots_picture_memory_configuration_all():
         send_set_large_dots_picture_memory_configuration_single(fn.name[:9], )
 
 
-def send_animations(animations: Union[Animation, List[Animation]], file: FileName = FileName.FILE_PRIORITY) -> None:
+def send_animations(animations: Union[Animation, List[Animation]], file: FileName = FileName.FILE_PRIORITY,
+                    addr: bytes = SignAddress.SIGN_ADDRESS_BROADCAST,
+                    ttype: bytes = SignType.SIGN_TYPE_ALL_VERIFY, ) -> None:
     """
     Transmits the given list of animations to the betabrite sign
     :param animations: list of animations to transmit
     :param file: file to send animations to
+    :param addr: sign address
+    :param ttype: sign type
     :return: None
     """
     #   If you want to send just one animation, you can use its 'display()' method
     # _transmit(SERIAL_PORT, _write_file(animations, file=FILE_NORMAL_RANGE[0]))
     # To transmit to a non
-    _transmit(_write_file(animations, file=file))
+    _transmit(_write_file(animations, file=file), addr=addr, ttype=ttype)
 
 
 '''
