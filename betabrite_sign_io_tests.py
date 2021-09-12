@@ -11,9 +11,9 @@ def _test_function(function: Callable, *args: Tuple[Any, ...], **kwargs: Dict[st
     :param function: Callable method to be tested
     :return: None
     """
-    mts(f"Testing function: {function.__name__}", console_out=True)
+    mts(f"Testing function: {function.__name__}", seconds=5, console_out=True)
     result = function(*args, **kwargs)
-    mts(f"Received: {result}", console_out=True)
+    mts(f"Received: {result}", seconds=5, console_out=True)
     return result
 
 
