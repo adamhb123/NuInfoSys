@@ -440,8 +440,9 @@ class PacketCharacter(_GetterEnum):
     """
     Characters (and character sequences) only utilized in packets (i.e. not as text characters) that don't fit elsewhere
     """
-    WAKEUP: bytes = b"\x00\x00\x00\x00\x00\x00"
+
     NUL: bytes = b"\x00"  # NULl
+    WAKEUP: bytes = NUL * 5
     SOH: bytes = b"\x01"  # Start Of Header
     STX: bytes = b"\x02"  # Start Of TeXt
     SOM: bytes = b"\x1b"  # Start Of Mode

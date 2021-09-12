@@ -183,7 +183,7 @@ def run_all_tests():
     Runs all betabrite sign IO tests
     """
     mts("Testing send methods")
-    [x() for x in {test_send_dots}]
+    [x() for x in (test_send_dots,)]
     mts("Testing read methods")
     [x() for x in (test_read_time, test_read_speaker_status, test_read_general_information,
                    test_read_memory_pool_size, test_read_memory_configuration, test_read_memory_dump,
