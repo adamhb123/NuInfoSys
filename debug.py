@@ -3,7 +3,7 @@ import betabrite
 from framecontrolbytes import *
 
 
-def mts(message: str, seconds: int = 5, console_out: bool = False, file: FileName = FileName.FILE_PRIORITY,
+def mts(message: str, seconds: int = 5, console_out: bool = True, file: FileName = FileName.FILE_PRIORITY,
         addr: bytes = SignAddress.SIGN_ADDRESS_BROADCAST,
         ttype: bytes = SignType.SIGN_TYPE_BETABRITE):
     """

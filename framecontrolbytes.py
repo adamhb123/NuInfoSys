@@ -9,14 +9,6 @@ for each file should not exceed the total amount of available memory in the pool
 the last file in the Memory Configuration only if this last file is a TEXT file. This assigns all remaining memory to
 the file."
 
-As a result of this, I am capping the TOTAL_MEMORY allowed to be allocated to the below value. This was calculated by
-the following formula:
-
-TRUE_AVAILABLE_MEMORY_SIZE (30000 bytes)
-- PRIORITY_FILE_SIZE(125 bytes)
-- OVERHEAD(11 bytes per file)*MAX_FILE_COUNT(65 message files)
-- CAUSE_IT_MAKES_ME_FEEL_BETTER_BYTES(4160 bytes)
-= 25000 bytes 
 '''
 from enum import Enum
 from typing import Any
@@ -27,7 +19,7 @@ class _GetterEnum(Enum):
         return self.value
 
 
-TOTAL_MEMORY: int = 25000
+TOTAL_MEMORY: int = 30000
 
 
 class SignType(_GetterEnum):
@@ -205,10 +197,102 @@ class ReadSpecialFunctionLabel(_GetterEnum):
     TEMPERATURE_OFFSET = b"T"
 
 
-FileName: Enum = Enum(
-    'FileName',
-    [(f"FILE_{'PRIORITY' if x == 48 else x - 31}", x.to_bytes(1, "big")) for x in range(0x20, 0x7F)]
-)
+class FileName(_GetterEnum):
+    FILE_1 = b' '
+    FILE_2 = b'!'
+    FILE_3 = b'"'
+    FILE_4 = b'#'
+    FILE_5 = b'$'
+    FILE_6 = b'%'
+    FILE_7 = b'&'
+    FILE_8 = b"'"
+    FILE_9 = b'('
+    FILE_10 = b')'
+    FILE_11 = b'*'
+    FILE_12 = b'+'
+    FILE_13 = b','
+    FILE_14 = b'-'
+    FILE_15 = b'.'
+    FILE_16 = b'/'
+    FILE_PRIORITY = b'0'
+    FILE_17 = b'1'
+    FILE_18 = b'2'
+    FILE_19 = b'3'
+    FILE_20 = b'4'
+    FILE_21 = b'5'
+    FILE_22 = b'6'
+    FILE_23 = b'7'
+    FILE_24 = b'8'
+    FILE_25 = b'9'
+    FILE_26 = b':'
+    FILE_27 = b';'
+    FILE_28 = b'<'
+    FILE_29 = b'='
+    FILE_30 = b'>'
+    FILE_31 = b'?'
+    FILE_32 = b'@'
+    FILE_33 = b'A'
+    FILE_34 = b'B'
+    FILE_35 = b'C'
+    FILE_36 = b'D'
+    FILE_37 = b'E'
+    FILE_38 = b'F'
+    FILE_39 = b'G'
+    FILE_40 = b'H'
+    FILE_41 = b'I'
+    FILE_42 = b'J'
+    FILE_43 = b'K'
+    FILE_44 = b'L'
+    FILE_45 = b'M'
+    FILE_46 = b'N'
+    FILE_47 = b'O'
+    FILE_48 = b'P'
+    FILE_49 = b'Q'
+    FILE_50 = b'R'
+    FILE_51 = b'S'
+    FILE_52 = b'T'
+    FILE_53 = b'U'
+    FILE_54 = b'V'
+    FILE_55 = b'W'
+    FILE_56 = b'X'
+    FILE_57 = b'Y'
+    FILE_58 = b'Z'
+    FILE_59 = b'['
+    FILE_60 = b'\\'
+    FILE_61 = b']'
+    FILE_62 = b'^'
+    FILE_63 = b'_'
+    FILE_64 = b'`'
+    FILE_65 = b'a'
+    FILE_66 = b'b'
+    FILE_67 = b'c'
+    FILE_68 = b'd'
+    FILE_69 = b'e'
+    FILE_70 = b'f'
+    FILE_71 = b'g'
+    FILE_72 = b'h'
+    FILE_73 = b'i'
+    FILE_74 = b'j'
+    FILE_75 = b'k'
+    FILE_76 = b'l'
+    FILE_77 = b'm'
+    FILE_78 = b'n'
+    FILE_79 = b'o'
+    FILE_80 = b'p'
+    FILE_81 = b'q'
+    FILE_82 = b'r'
+    FILE_83 = b's'
+    FILE_84 = b't'
+    FILE_85 = b'u'
+    FILE_86 = b'v'
+    FILE_87 = b'w'
+    FILE_88 = b'x'
+    FILE_89 = b'y'
+    FILE_90 = b'z'
+    FILE_91 = b'{'
+    FILE_92 = b'|'
+    FILE_93 = b'}'
+    FILE_94 = b'~'
 
 
 # Note: 0x30 ("0") (int: 42) is reserved for priority (hence the name 'FILE_PRIORITY')

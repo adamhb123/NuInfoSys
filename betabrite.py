@@ -291,11 +291,13 @@ class Animation:
         self.color: bytes = random.choice(list(ANIMATION_COLOR_DICT.values()))
         self.position: bytes = random.choice(list(ANIMATION_POS_DICT.values()))
 
-    def display(self, file: bytes = FileName.FILE_PRIORITY) -> None:
+    def display(self, file: bytes = FileName.FILE_PRIORITY) -> bytes:
         """
         Sends this animation straight ta the display
+
+        :return: Bytes representing the sent packet
         """
-        _transmit(_write_file(self, file=file))
+        return _transmit(_write_file(self, file=file))
 
     def bytes(self) -> bytes:
         """
@@ -304,12 +306,10 @@ class Animation:
         """
         return PacketCharacter.SOM + self.position + self.mode + self.color + _transcode(self.text)
 
-
 '''
 [UTILITY]
 Utility Methods
 '''
-
 
 def _transmit(payload: bytes, addr: bytes = SignAddress.SIGN_ADDRESS_BROADCAST,
               ttype: bytes = SignType.SIGN_TYPE_ALL_VERIFY, port: str = config.SERIAL_PORT) -> bytes:
@@ -355,6 +355,7 @@ def _transmit_multi(payloads: List[bytes], addr: bytes = SignAddress.SIGN_ADDRES
         final_packet += payload + PacketCharacter.ETX
     # Signal end of packet transmission
     ser.write(PacketCharacter.EOT)
+    final_packet += PacketCharacter.EOT
     ser.close()
     return final_packet
     
@@ -445,7 +446,7 @@ Send Methods
 
 def send_dots(dots_data: bytes, width: Optional[Union[int, bytes]] = None,
               height: Optional[Union[int, bytes]] = None,
-              file: FileName = FileName.FILE_PRIORITY) -> None:
+              file: FileName = FileName.FILE_PRIORITY) -> bytes:
     """
     [UNTESTED]
     Sends a SMALL DOTS PICTURE file to the sign, as per 6.4.1 in the specification
@@ -455,7 +456,7 @@ def send_dots(dots_data: bytes, width: Optional[Union[int, bytes]] = None,
     :param dots_data: DOTS data to transmit
     :param width: width of DOTS image
     :param height: height of DOTS image
-    :return: None
+    :return: Bytes sent in packet
     """
     if width is None:
         width: int = len(max(str(dots_data).split('\r')))
@@ -466,29 +467,40 @@ def send_dots(dots_data: bytes, width: Optional[Union[int, bytes]] = None,
     if isinstance(height, int):
         height: bytes = height.to_bytes(1, "big")
     dots_data.replace(b"\r", TextCharacter.CR)
-    _transmit(CommandCode.COMMAND_WRITE_DOTS + file.value + height + width + dots_data)
+    packet = CommandCode.COMMAND_WRITE_DOTS + file.value + height + width + dots_data
+    return _transmit(packet)
 
 
-def send_time() -> None:
+def send_time() -> bytes:
     """
     [UNTESTED]
     Sends the time of day (in 24-hour format) to the sign, in the format HhMm
-    :return: None
+
+    :return: Bytes sent in packet
     """
-    _transmit(CommandCode.COMMAND_WRITE_SPECIAL + WriteSpecialFunctionsLabel.SET_TIME_OF_DAY + bytes(
-        datetime.now().strftime("%H%M"), 'utf-8'))
+    packet = CommandCode.COMMAND_WRITE_SPECIAL + WriteSpecialFunctionsLabel.SET_TIME_OF_DAY + bytes(datetime.now().strftime("%H%M"), 'utf-8')
+    
+    return _transmit(packet)
 
-
-def send_soft_reset() -> None:
+def send_soft_reset() -> bytes:
     """
     [TESTED]
+    Sends the soft reset command to the sign
 
+    :return: Bytes sent in packet
     """
-    _transmit(CommandCode.COMMAND_WRITE_SPECIAL + WriteSpecialFunctionsLabel.SOFT_RESET)
+    packet = CommandCode.COMMAND_WRITE_SPECIAL + WriteSpecialFunctionsLabel.SOFT_RESET
+    
+    return _transmit(packet)
 
 
-def send_set_large_dots_picture_memory_configuration_single(filename: Union[str, bytes], width: Union[int, bytes],
-                                                            height: Union[int, bytes]) -> None:
+def send_set_large_dots_picture_memory_configuration_single(filename: Union[str, bytes], width: Union[int, bytes], height: Union[int, bytes]) -> bytes:
+    """
+    [UNTESTED]
+    Sends...    
+ 
+    :return: Bytes sent in packet
+    """
     if isinstance(filename, str):
         filename: bytes = bytes(filename, "utf-8")
     if len(filename) < 9:
@@ -501,31 +513,34 @@ def send_set_large_dots_picture_memory_configuration_single(filename: Union[str,
     if isinstance(height, int):
         height: bytes = height.to_bytes(2, 'big')
 
-    _transmit(CommandCode.COMMAND_WRITE_SPECIAL + WriteSpecialFunctionsLabel.SET_LARGE_DOTS_PICTURE_MEMORY_CONFIGURATION
-              + filename + height + width + b"0000")
+    packet = CommandCode.COMMAND_WRITE_SPECIAL + WriteSpecialFunctionsLabel.SET_LARGE_DOTS_PICTURE_MEMORY_CONFIGURATION + filename + height + width + b"0000"    
+    return _transmit(packet)
 
+def send_set_large_dots_picture_memory_configuration_all() -> bytes:
+    """
+    [UNTESTED, UNFINISHED]
+    Sends...
 
-def send_set_large_dots_picture_memory_configuration_all():
+    :return: Bytes sent in packet
+    """
     for fn in FileName:  # type: ignore
-        send_set_large_dots_picture_memory_configuration_single(fn.name[:9], )
+        #send_set_large_dots_picture_memory_configuration_single(fn.name[:9], )
+        pass
 
-
-def send_animations(animations: Union[Animation, List[Animation]], file: FileName = FileName.FILE_PRIORITY,
-                    addr: bytes = SignAddress.SIGN_ADDRESS_BROADCAST,
-                    ttype: bytes = SignType.SIGN_TYPE_ALL_VERIFY, ) -> None:
+def send_animations(animations: Union[Animation, List[Animation]], file: FileName = FileName.FILE_PRIORITY, addr: bytes = SignAddress.SIGN_ADDRESS_BROADCAST, ttype: bytes = SignType.SIGN_TYPE_ALL_VERIFY) -> bytes:
     """
     Transmits the given list of animations to the betabrite sign
     :param animations: list of animations to transmit
     :param file: file to send animations to
     :param addr: sign address
     :param ttype: sign type
-    :return: None
+
+    :return: Bytes sent in packet
     """
     #   If you want to send just one animation, you can use its 'display()' method
     # _transmit(config.SERIAL_PORT, _write_file(animations, file=FILE_NORMAL_RANGE[0]))
-    # To transmit to a non
-    _transmit(_write_file(animations, file=file), addr=addr, ttype=ttype)
-
+    packet = _write_file(animations, file=file)
+    return _transmit(packet, addr=addr, ttype=ttype)
 
 '''
 [SIGN IO]
@@ -537,6 +552,7 @@ def read_time() -> bytes:
     """
     [UNTESTED]
     Reads time bytes from the sign
+
     :return: Time bytes read from the sign
     """
     _transmit(CommandCode.COMMAND_READ_SPECIAL + ReadSpecialFunctionLabel.TIME_OF_DAY)
@@ -547,6 +563,7 @@ def read_speaker_status() -> bytes:
     """
     [UNTESTED]
     Reads speaker status from the sign
+
     :return: speaker status bytes read from the sign
     """
     _transmit(CommandCode.COMMAND_READ_SPECIAL + ReadSpecialFunctionLabel.SPEAKER_STATUS)
