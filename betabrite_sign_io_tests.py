@@ -1,4 +1,7 @@
+import sys
+import config
 from typing import Callable, Tuple, Dict
+from inspect import getmembers, isfunction
 
 import betabrite
 from framecontrolbytes import *
@@ -177,21 +180,48 @@ def test_read_temperature_offset() -> None:
     """
     _test_function(betabrite.read_temperature_offset)
 
-
-def run_all_tests():
+def run_all_send_tests() -> None:
     """
-    Runs all betabrite sign IO tests
+    Runs all betabrite sign send IO tests
+    :return: None
     """
     mts("Testing send methods")
-    [x() for x in (test_send_dots,)]
+    [x[1]() for x in getmembers(sys.modules[__name__], lambda x: isfunction(x) and "test_send" in x.__name__)]
+
+def run_all_read_tests() -> None:
+    """
+    Runs all betabrite sign read IO tests
+    :return: None
+    """
     mts("Testing read methods")
-    [x() for x in (test_read_time, test_read_speaker_status, test_read_general_information,
-                   test_read_memory_pool_size, test_read_memory_configuration, test_read_memory_dump,
-                   test_read_day_of_week, test_read_time_format, test_read_run_time_table,
-                   test_read_serial_error_status_register, test_read_network_query, test_read_run_sequence,
-                   test_read_run_day_table, test_read_counter, test_read_large_dots_picture_memory_configuration,
-                   test_read_date, test_read_temperature_offset)]
+    [x[1]() for x in getmembers(sys.modules[__name__], lambda x: isfunction(x) and "test_read" in x.__name__)]
+
+def run_all_tests() -> None:
+    """
+    Runs all betabrite sign IO tests
+    :return: None
+    """
+    run_all_send_tests()
+    run_all_read_tests() 
+
+def main() -> None:
+    """
+    CLI Entrypoint
+    """
+    # pylint: disable=import-outside-toplevel
+    import argparse
+    parser: argparse.ArgumentParser = argparse.ArgumentParser()
+    parser.add_argument(
+        "tests_to_run",
+        help=f"test or test group to run"
+    , nargs='?', default="run_all_tests")
+    args: argparse.Namespace = parser.parse_args()
+    tests_to_run: str = args.tests_to_run
+    if config.CLI_ALLOW_TRANSMISSION:
+        
+        [x[1]() for x in getmembers(sys.modules[__name__], lambda x: isfunction(x) and tests_to_run == x.__name__)]
 
 
 if __name__ == "__main__":
-    run_all_tests()
+    main()
+

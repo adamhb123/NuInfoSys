@@ -10,22 +10,17 @@ the job done, and I'll try and make it nicer over time.
 ~brewer
 """
 import time
+import random
 from datetime import datetime
 from enum import Enum
 from typing import Union, List, Dict, Optional
-import random
 from serial import Serial
+
+import config
 # pylint: disable=wildcard-import
 from framecontrolbytes import *
 from memory import *
 
-'''
-Configurables
-'''
-CLI_ALLOW_TRANSMISSION: bool = False
-CLI_TERMINAL_AND: str = "-"  # Animation separator
-CLI_ANIMATION_PROPERTY_SEPARATOR: str = ","  # Animation property separator
-SERIAL_PORT: str = "/dev/serial/by-id/usb-Prolific_Technology_Inc._USB-Serial_Controller_D-if00-port0"
 # Note that on the BetaBrite, position does not matter at all, so setting any of these does nothing
 # IT IS still required to be sent in the message packet, however
 ANIMATION_POS_DICT: Dict[str, bytes] = {
@@ -317,24 +312,24 @@ Utility Methods
 
 
 def _transmit(payload: bytes, addr: bytes = SignAddress.SIGN_ADDRESS_BROADCAST,
-              ttype: bytes = SignType.SIGN_TYPE_ALL_VERIFY, port: str = SERIAL_PORT) -> None:
+              ttype: bytes = SignType.SIGN_TYPE_ALL_VERIFY, port: str = config.SERIAL_PORT) -> bytes:
     """
     Transmits a single packet
     :param payload: packet Command Code + Data Field to transmit
     :param addr: packet Sign Address - the address of the sign. See the protocol write-up summary for more details.
     :param ttype: packet Type Code - describes the type of sign we're communicating to
-    :return: None
+    :return: Bytes representing the sent packet
     """
     packet: bytes = (PacketCharacter.WAKEUP + PacketCharacter.SOH + ttype + addr + PacketCharacter.STX + payload +
                      PacketCharacter.EOT)
-    print(packet)
     ser: Serial = Serial(port, 9600, timeout=10)
     ser.write(packet)
     ser.close()
+    return packet
 
 
 def _transmit_multi(payloads: List[bytes], addr: bytes = SignAddress.SIGN_ADDRESS_BROADCAST,
-                    ttype: bytes = SignType.SIGN_TYPE_ALL_VERIFY) -> None:
+                    ttype: bytes = SignType.SIGN_TYPE_ALL_VERIFY) -> bytes:
     """
     [UNTESTED]
     Transmits multiple packets (in nested packet format, as per 5.1.3 in the specification)
@@ -342,29 +337,34 @@ def _transmit_multi(payloads: List[bytes], addr: bytes = SignAddress.SIGN_ADDRES
     of each Command Code and Data Field pair
     :param addr: packet Sign Address - the address of the sign. See the protocol write-up summary for more details.
     :param ttype: packet Type Code - describes the type of sign we're communicating to
-    :return: None
+    :return: Bytes representing the sent packet (containing all nested packets)
     """
     # This would be a cool one liner to form the packet BUT we need to have 100ms delays after <STX>'s
     # packet = WAKEUP + SOH + ttype + addr + STX + (ETX+STX).join(payloads) + ETX + EOT
-    ser: Serial = Serial(SERIAL_PORT, 9600, timeout=10)
+    ser: Serial = Serial(config.SERIAL_PORT, 9600, timeout=10)
     # Initial wakeup
-    ser.write(PacketCharacter.WAKEUP + PacketCharacter.SOH + ttype + addr)
+    # final_packet only exists here so that we can return what we've sent to serial
+    final_packet = PacketCharacter.WAKEUP + PacketCharacter.SOH + ttype + addr
+    ser.write(final_packet)
     for payload in payloads:
         ser.write(PacketCharacter.STX)
+        final_packet += PacketCharacter.STX
         # 100ms wait + python's performance delay should be adequate here
         time.sleep(.1)
         ser.write(payload + PacketCharacter.ETX)
+        final_packet += payload + PacketCharacter.ETX
     # Signal end of packet transmission
     ser.write(PacketCharacter.EOT)
     ser.close()
-
+    return final_packet
+    
 
 def _receive(timeout: int = 10) -> bytes:
     """
     Receives data from the serial sign (until reaching an EOT)
     :param timeout: time to receive until we timeout
     """
-    ser: Serial = Serial(SERIAL_PORT, 9600, timeout=timeout)
+    ser: Serial = Serial(config.SERIAL_PORT, 9600, timeout=timeout)
     received: bytes = ser.read_until(PacketCharacter.EOT)
     return received
 
@@ -414,17 +414,17 @@ CLI Methods
 def _cli_parse_animations_from_string(animation_string: str) -> List[Animation]:
     """
     animation_string should be formatted as such:
-    TEXT ANIMATION_MODE ANIMATION_COLOR ANIMATION_POSITION$CLI_TERMINAL_AND$NEXT_ANIMATION
+    TEXT ANIMATION_MODE ANIMATION_COLOR ANIMATION_POSITION$config.CLI_TERMINAL_AND$NEXT_ANIMATION
     e.g. chungus cherrybomb rainbow2 None-bingus None amber None
-    where '-' is replaced with the CLI_TERMINAL_AND
+    where '-' is replaced with the config.CLI_TERMINAL_AND
     """
-    return _cli_parse_animations(animation_string.split(CLI_TERMINAL_AND))
+    return _cli_parse_animations(animation_string.split(config.CLI_TERMINAL_AND))
 
 
 def _cli_parse_animations(animations: List[str]):
     parsed_animations: List[Animation] = []
     while len(animations) != 0:
-        animget: List[Union[str, bytes]] = animations.pop(0).split(CLI_ANIMATION_PROPERTY_SEPARATOR)
+        animget: List[Union[str, bytes]] = animations.pop(0).split(config.CLI_ANIMATION_PROPERTY_SEPARATOR)
         animget[0]: str = animget[0] if animget[0] != "None" else ""
         animget[1]: Union[str, bytes] = ANIMATION_MODE_DICT[animget[1]] if animget[1] != "None" \
             else TextMode.AUTO
@@ -465,7 +465,6 @@ def send_dots(dots_data: bytes, width: Optional[Union[int, bytes]] = None,
         width: bytes = width.to_bytes(1, "big")
     if isinstance(height, int):
         height: bytes = height.to_bytes(1, "big")
-    print(f"FUCK: h={height} w={width}")
     dots_data.replace(b"\r", TextCharacter.CR)
     _transmit(CommandCode.COMMAND_WRITE_DOTS + file.value + height + width + dots_data)
 
@@ -523,7 +522,7 @@ def send_animations(animations: Union[Animation, List[Animation]], file: FileNam
     :return: None
     """
     #   If you want to send just one animation, you can use its 'display()' method
-    # _transmit(SERIAL_PORT, _write_file(animations, file=FILE_NORMAL_RANGE[0]))
+    # _transmit(config.SERIAL_PORT, _write_file(animations, file=FILE_NORMAL_RANGE[0]))
     # To transmit to a non
     _transmit(_write_file(animations, file=file), addr=addr, ttype=ttype)
 
@@ -714,13 +713,13 @@ def main() -> None:
     parser.add_argument(
         "messages",
         help=f"messages to send, structured like: \n"
-             f"TEXT,ANIMATION_MODE,ANIMATION_COLOR,ANIMATION_POSITION{CLI_TERMINAL_AND}[next message or EOL]",
+             f"TEXT,ANIMATION_MODE,ANIMATION_COLOR,ANIMATION_POSITION{config.CLI_TERMINAL_AND}[next message or EOL]",
         nargs='+')
     args: argparse.Namespace = parser.parse_args()
     # display_DOTS(None)
     animations: str = ' '.join(args.messages)
     animations: List[Animation] = _cli_parse_animations_from_string(animations)
-    if CLI_ALLOW_TRANSMISSION:
+    if config.CLI_ALLOW_TRANSMISSION:
         _transmit(_write_file(animations))
     else:
         print(f"CLI transmission is disabled...")
