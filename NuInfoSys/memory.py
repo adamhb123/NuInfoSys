@@ -3,17 +3,30 @@ from enum import Enum
 import betabrite
 from framecontrolbytes import *
 
+# Temporary memory dict
+MEMORY_LAYOUT: Dict[bytes, int] = {
+    FileName.FILE_PRIORITY: 25000,
+}
 
+
+
+'''
 class MemoryConfigurationType(Enum):
     """
-    Memory configuration settings
-    ALL_FILES_EQUAL: indicates that each of the 100+ files should share an equal amount of memory
+    Memory configuration options
+    ALL_FILES_EQUAL: indicates that each of the 65 available files should share an equal amount of memory
     FIRST_FILE_MAX: lazy method, indicates that the first (non-priority) file should have all the memory
-    CUSTOM: indicates that memory allocation will be defined by some collection
+    CUSTOM: indicates that memory allocation will be defined by some dictionary
     """
     ALL_FILES_EQUAL = 0
     FIRST_FILE_MAX = 1
     CUSTOM = 2
+
+
+
+I want to redo all this
+
+
 
 
 class Memory:
@@ -85,3 +98,4 @@ class Memory:
 class MemoryConfigurationError(Exception):
     def __init__(self, message):
         super().__init__(message)
+'''

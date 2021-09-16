@@ -306,10 +306,12 @@ class Animation:
         """
         return PacketCharacter.SOM + self.position + self.mode + self.color + _transcode(self.text)
 
+
 '''
 [UTILITY]
 Utility Methods
 '''
+
 
 def _transmit(payload: bytes, addr: bytes = SignAddress.SIGN_ADDRESS_BROADCAST,
               ttype: bytes = SignType.SIGN_TYPE_ALL_VERIFY, port: str = config.SERIAL_PORT) -> bytes:
@@ -358,7 +360,7 @@ def _transmit_multi(payloads: List[bytes], addr: bytes = SignAddress.SIGN_ADDRES
     final_packet += PacketCharacter.EOT
     ser.close()
     return final_packet
-    
+
 
 def _receive(timeout: int = 10) -> bytes:
     """
@@ -370,7 +372,7 @@ def _receive(timeout: int = 10) -> bytes:
     return received
 
 
-def _write_file(animations: Union[List[Animation], Animation], file: FileName = FileName.FILE_PRIORITY) -> bytes:
+def _write_file(animations: Union[List[Animation], Animation], file: bytes = FileName.FILE_PRIORITY) -> bytes:
     """Writes the given animations (which could be a single animation) in the proper payload format
     If file is anything but FILE_PRIORITY, then memory needs to be allocated and dealt with before hand
     Maybe I'll add a memory configuration function that assigns memory per some sort of input specification
@@ -446,7 +448,7 @@ Send Methods
 
 def send_dots(dots_data: bytes, width: Optional[Union[int, bytes]] = None,
               height: Optional[Union[int, bytes]] = None,
-              file: FileName = FileName.FILE_PRIORITY) -> bytes:
+              file: bytes = FileName.FILE_PRIORITY) -> bytes:
     """
     [UNTESTED]
     Sends a SMALL DOTS PICTURE file to the sign, as per 6.4.1 in the specification
@@ -478,9 +480,11 @@ def send_time() -> bytes:
 
     :return: Bytes sent in packet
     """
-    packet = CommandCode.COMMAND_WRITE_SPECIAL + WriteSpecialFunctionsLabel.SET_TIME_OF_DAY + bytes(datetime.now().strftime("%H%M"), 'utf-8')
-    
+    packet = CommandCode.COMMAND_WRITE_SPECIAL + WriteSpecialFunctionsLabel.SET_TIME_OF_DAY + bytes(
+        datetime.now().strftime("%H%M"), 'utf-8')
+
     return _transmit(packet)
+
 
 def send_soft_reset() -> bytes:
     """
@@ -490,11 +494,12 @@ def send_soft_reset() -> bytes:
     :return: Bytes sent in packet
     """
     packet = CommandCode.COMMAND_WRITE_SPECIAL + WriteSpecialFunctionsLabel.SOFT_RESET
-    
+
     return _transmit(packet)
 
 
-def send_set_large_dots_picture_memory_configuration_single(filename: Union[str, bytes], width: Union[int, bytes], height: Union[int, bytes]) -> bytes:
+def send_set_large_dots_picture_memory_configuration_single(filename: Union[str, bytes], width: Union[int, bytes],
+                                                            height: Union[int, bytes]) -> bytes:
     """
     [UNTESTED]
     Sends...    
@@ -513,8 +518,9 @@ def send_set_large_dots_picture_memory_configuration_single(filename: Union[str,
     if isinstance(height, int):
         height: bytes = height.to_bytes(2, 'big')
 
-    packet = CommandCode.COMMAND_WRITE_SPECIAL + WriteSpecialFunctionsLabel.SET_LARGE_DOTS_PICTURE_MEMORY_CONFIGURATION + filename + height + width + b"0000"    
+    packet = CommandCode.COMMAND_WRITE_SPECIAL + WriteSpecialFunctionsLabel.SET_LARGE_DOTS_PICTURE_MEMORY_CONFIGURATION + filename + height + width + b"0000"
     return _transmit(packet)
+
 
 def send_set_large_dots_picture_memory_configuration_all() -> bytes:
     """
@@ -524,10 +530,14 @@ def send_set_large_dots_picture_memory_configuration_all() -> bytes:
     :return: Bytes sent in packet
     """
     for fn in FileName:  # type: ignore
-        #send_set_large_dots_picture_memory_configuration_single(fn.name[:9], )
+        # send_set_large_dots_picture_memory_configuration_single(fn.name[:9], )
         pass
+    return b''
 
-def send_animations(animations: Union[Animation, List[Animation]], file: FileName = FileName.FILE_PRIORITY, addr: bytes = SignAddress.SIGN_ADDRESS_BROADCAST, ttype: bytes = SignType.SIGN_TYPE_ALL_VERIFY) -> bytes:
+
+def send_animations(animations: Union[Animation, List[Animation]], file: bytes = FileName.FILE_PRIORITY,
+                    addr: bytes = SignAddress.SIGN_ADDRESS_BROADCAST,
+                    ttype: bytes = SignType.SIGN_TYPE_ALL_VERIFY) -> bytes:
     """
     Transmits the given list of animations to the betabrite sign
     :param animations: list of animations to transmit
@@ -541,6 +551,7 @@ def send_animations(animations: Union[Animation, List[Animation]], file: FileNam
     # _transmit(config.SERIAL_PORT, _write_file(animations, file=FILE_NORMAL_RANGE[0]))
     packet = _write_file(animations, file=file)
     return _transmit(packet, addr=addr, ttype=ttype)
+
 
 '''
 [SIGN IO]

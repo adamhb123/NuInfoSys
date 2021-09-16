@@ -14,10 +14,10 @@ setuptools.setup(
     url="https://github.com/adamhb123/NuInfoSys",
     project_urls={
     },
+    packages=['NuInfoSys'],
     classifiers=[
         "Programming Language :: Python :: 3",
         "Operating System :: OS Independent",
     ],
-    packages=setuptools.find_packages(include=["NuInfoSys"]),
     python_requires=">=3.6",
 )
