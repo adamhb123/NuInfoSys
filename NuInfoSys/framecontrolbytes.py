@@ -168,13 +168,21 @@ class FileLock(_GetterEnum):
     LOCKED: bytes = b"L"
 
 
-class TextFileStartTime(_GetterEnum):
+class TextFileTime(_GetterEnum):
     """
     Might change this later TODO: guh
     """
     ALLDAY: bytes = b"FD"
     NEVER: bytes = b"FE"
     ALWAYS: bytes = b"FF"
+
+
+class DOTSColorStatus(_GetterEnum):
+    # TODO: don't know if these should be like b"1000" or b"\x10\x00", assume the former b/c the protocol doesn't
+    # TODO: follow them with 'H'
+    MONOCHROME: bytes = b"1000"
+    THREE_COLOR: bytes = b"2000"
+    EIGHT_COLOR: bytes = b"4000"
 
 
 class ReadSpecialFunctionLabel(_GetterEnum):

@@ -18,8 +18,8 @@ from serial import Serial
 
 import config
 # pylint: disable=wildcard-import
-from framecontrolbytes import *
-from memory import *
+from NuInfoSys.framecontrolbytes import *
+from NuInfoSys import memory
 
 # Note that on the BetaBrite, position does not matter at all, so setting any of these does nothing
 # IT IS still required to be sent in the message packet, however
@@ -218,13 +218,6 @@ TextCharacterTranslationDict: Dict[bytes, bytes] = {
     b'': TextCharacter.XC_o_TILDE,
     }
 '''
-
-
-class DotsPictureMemoryConfiguration:
-    def __init__(self, filename: Union[str, bytes], width: Union[int, bytes], height: Union[int, bytes]):
-        self.filename = filename[:9]
-        self.width = width  # TODO: int2byets
-        self.height = height  # TODO: int2bytes
 
 
 class Animation:
