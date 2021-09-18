@@ -1,12 +1,12 @@
 from typing import Dict, Union, Optional, Callable, List
 from enum import Enum
-import betabrite
-from framecontrolbytes import *
+from NuInfoSys import betabrite
+from NuInfoSys.framecontrolbytes import *
 
 """
 Please note that all classes inheriting File (as well as File itself) are abstractions of the memorial properties of
 the actual files that will be stored in the display. This means that these classes do not contain the actual information
-that will be displayed on the screen (though we do need to know the width and height parameters here for DOTS files). 
+that will be displayed on the screen (though we do need to know the width and height parameters here for DOTS files).
 That is instead handled in betabrite.py.
 """
 
@@ -271,3 +271,4 @@ if __name__ == "__main__":
     print(mem.files[0].bytes())
     print(mem.files[1].bytes())
     print(mem.files[2].bytes())
+    print(mem.flash())

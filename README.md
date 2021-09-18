@@ -18,3 +18,9 @@ these rules or I won't even look at your code:
 
 If you follow all these rules and there is still something weird in
 your code I will mention it in the review. 
+
+## Running from the CLI
+In order to run NuInfoSys from the command line, use the following
+command:
+```python3.6 -m NuInfoSys.MODULE```
+Usually MODULE will be betabrite

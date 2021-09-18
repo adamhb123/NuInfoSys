@@ -16,7 +16,7 @@ from enum import Enum
 from typing import Union, List, Dict, Optional
 from serial import Serial
 
-import config
+from NuInfoSys import config
 # pylint: disable=wildcard-import
 from NuInfoSys.framecontrolbytes import *
 from NuInfoSys import memory
@@ -495,8 +495,8 @@ def send_set_large_dots_picture_memory_configuration_single(filename: Union[str,
                                                             height: Union[int, bytes]) -> bytes:
     """
     [UNTESTED]
-    Sends...    
- 
+    Sends...
+
     :return: Bytes sent in packet
     """
     if isinstance(filename, str):

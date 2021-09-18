@@ -1,11 +1,11 @@
 import sys
-import config
 from typing import Callable, Tuple, Dict
 from inspect import getmembers, isfunction
 
-import betabrite
-from framecontrolbytes import *
-from debug import mts
+from NuInfoSys import betabrite
+from NuInfoSys import config
+from NuInfoSys.framecontrolbytes import *
+from NuInfoSys.debug import mts
 
 def _test_send_function(function: Callable, *args: Tuple[Any, ...], **kwargs: Dict[str, Any]) -> bytes:
     """
@@ -214,12 +214,12 @@ def run_all_tests() -> None:
     :return: None
     """
     run_all_send_tests()
-    run_all_read_tests() 
+    run_all_read_tests()
 
 def main() -> None:
     """
     CLI Entrypoint
-    
+
     # pylint: disable=import-outside-toplevel
     import argparse
     parser: argparse.ArgumentParser = argparse.ArgumentParser()
@@ -229,7 +229,7 @@ def main() -> None:
     , nargs='?', default="run_all_tests")
     args: argparse.Namespace = parser.parse_args()
     tests_to_run: str = args.tests_to_run
-    if config.CLI_ALLOW_TRANSMISSION:        
+    if config.CLI_ALLOW_TRANSMISSION:
         [x[1]() for x in getmembers(sys.modules[__name__], lambda x: isfunction(x) and tests_to_run == x.__name__)]
     mts("Testing complete")
     """
