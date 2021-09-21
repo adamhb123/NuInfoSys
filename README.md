@@ -1,5 +1,5 @@
 # NuInfoSys
-kekw malding
+currently INCOMPLETE -- kekw malding
 ## Future Goals
 * Custom Images (DOTS files)
 * Custom Animations (Chaining DOTS files)
@@ -23,4 +23,4 @@ your code I will mention it in the review.
 In order to run NuInfoSys from the command line, use the following
 command:
 ```python3.6 -m NuInfoSys.MODULE```
-Usually MODULE will be betabrite
+Usually MODULE will be betabrite (i.e. ```python3.6 -m NuInfoSys.betabrite```
