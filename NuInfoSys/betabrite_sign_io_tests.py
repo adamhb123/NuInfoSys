@@ -233,7 +233,7 @@ def main() -> None:
         [x[1]() for x in getmembers(sys.modules[__name__], lambda x: isfunction(x) and tests_to_run == x.__name__)]
     mts("Testing complete")
     """
-    run_all_send_tests()
+    run_all_tests()
 if __name__ == "__main__":
     main()
 
