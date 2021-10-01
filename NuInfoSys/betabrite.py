@@ -375,13 +375,13 @@ def _write_file(animations: Union[List[Animation], Animation], file: bytes = Fil
     """
     #   Many animations
     if isinstance(animations, list):
-        payload: bytes = CommandCode.COMMAND_WRITE_TEXT + file.value
+        payload: bytes = CommandCode.COMMAND_WRITE_TEXT + file
         for x in range(len(animations)):
             animation: Animation = animations.pop(0)
             payload += animation.bytes()
     #   One animation
     elif isinstance(animations, Animation):
-        payload: bytes = CommandCode.COMMAND_WRITE_TEXT + file.value + animations.bytes()
+        payload: bytes = CommandCode.COMMAND_WRITE_TEXT + file + animations.bytes()
     else:
         raise ValueError(f"Invalid argument given: animations='{animations}'")
     return payload
@@ -462,7 +462,7 @@ def send_dots(dots_data: bytes, width: Optional[Union[int, bytes]] = None,
     if isinstance(height, int):
         height: bytes = height.to_bytes(1, "big")
     dots_data.replace(b"\r", TextCharacter.CR)
-    packet = CommandCode.COMMAND_WRITE_DOTS + file.value + height + width + dots_data
+    packet = CommandCode.COMMAND_WRITE_DOTS + file + height + width + dots_data
     return _transmit(packet)
 
 
