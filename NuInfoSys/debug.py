@@ -1,6 +1,6 @@
 import time
-import betabrite
-from framecontrolbytes import *
+from NuInfoSys import betabrite
+from NuInfoSys.framecontrolbytes import *
 
 
 def mts(message: str, seconds: int = 5, console_out: bool = True, file: FileName = FileName.FILE_PRIORITY,
