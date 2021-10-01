@@ -317,7 +317,7 @@ def _transmit(payload: bytes, addr: bytes = SignAddress.SIGN_ADDRESS_BROADCAST,
     """
     packet: bytes = (PacketCharacter.WAKEUP + PacketCharacter.SOH + ttype + addr + PacketCharacter.STX + payload +
                      PacketCharacter.EOT)
-    ser: Serial = Serial(port, 9600, timeout=10)
+    ser: Serial = Serial(port, config.BAUD_RATE, timeout=10)
     ser.write(packet)
     ser.close()
     return packet
@@ -336,7 +336,7 @@ def _transmit_multi(payloads: List[bytes], addr: bytes = SignAddress.SIGN_ADDRES
     """
     # This would be a cool one liner to form the packet BUT we need to have 100ms delays after <STX>'s
     # packet = WAKEUP + SOH + ttype + addr + STX + (ETX+STX).join(payloads) + ETX + EOT
-    ser: Serial = Serial(config.SERIAL_PORT, 9600, timeout=10)
+    ser: Serial = Serial(config.SERIAL_PORT, config.BAUD_RATE, timeout=10)
     # Initial wakeup
     # final_packet only exists here so that we can return what we've sent to serial
     final_packet = PacketCharacter.WAKEUP + PacketCharacter.SOH + ttype + addr
@@ -360,7 +360,7 @@ def _receive(timeout: int = 10) -> bytes:
     Receives data from the serial sign (until reaching an EOT)
     :param timeout: time to receive until we timeout
     """
-    ser: Serial = Serial(config.SERIAL_PORT, 9600, timeout=timeout)
+    ser: Serial = Serial(config.SERIAL_PORT, config.BAUD_RATE, timeout=timeout)
     received: bytes = ser.read_until(PacketCharacter.EOT)
     return received
 
