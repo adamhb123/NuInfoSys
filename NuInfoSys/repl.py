@@ -15,13 +15,13 @@ def main():
     receive_mode: bool = False
     print(HELP_MESSAGE)
     while True:
-        command: str = input(f"[RECEIVE MODE: {receive_mode}] $")
+        command: str = input(f"[RECEIVE MODE: {receive_mode}]: ")
         # Parse setting change, could use a dict for this if more settings come up
         if "RECEIVE=" in command:
             choice: str = command.split('=')[1].lower()
             receive_mode: bool = True if choice == "true" else False
         # Send command
-        ser.write(command)
+        ser.write(bytes(command, "utf-8"))
         # Wait for response if in receive mode
         if receive_mode:
             received: bytes = ser.read_until(PacketCharacter.EOT)
