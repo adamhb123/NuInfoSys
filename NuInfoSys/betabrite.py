@@ -12,7 +12,6 @@ the job done, and I'll try and make it nicer over time.
 import time
 import random
 from datetime import datetime
-from enum import Enum
 from typing import Union, List, Dict, Optional
 from serial import Serial
 
