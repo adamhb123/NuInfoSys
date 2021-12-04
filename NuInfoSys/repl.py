@@ -21,7 +21,7 @@ def main():
             choice: str = command.split('=')[1].lower()
             receive_mode: bool = True if choice == "true" else False
         # Send command
-        ser.write(PacketCharacter.NUL * 5 + PacketCharacter.SOH + SignType.SIGN_TYPE_ALL_VERIFY +
+        ser.write(PacketCharacter.NUL * 5 + PacketCharacter.SOH + SignType.SIGN_TYPE_ALL_VERIFY + PacketCharacter.STX +
                   SignAddress.SIGN_ADDRESS_BROADCAST + bytes(command, "utf-8") + PacketCharacter.EOT)
         # Wait for response if in receive mode
         if receive_mode:
