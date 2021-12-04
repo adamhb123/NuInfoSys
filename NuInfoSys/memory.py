@@ -75,7 +75,6 @@ class TextFile(File):
 
 
 class DOTSFile(File):
-
     def __init__(self, name: bytes, width: Union[bytes, int], height: Union[bytes, int], locked: bool = True,
                  color_status: bytes = DOTSColorStatus.EIGHT_COLOR) -> None:
         if name == FileName.FILE_PRIORITY:
