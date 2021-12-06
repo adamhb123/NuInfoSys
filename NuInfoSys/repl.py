@@ -43,15 +43,16 @@ def main():
         if len(command_split):
             for i in range(0, len(command_split)):
                 if command_split[i]:
-                    print(command_split[i][0:2])
                     if command_split[i][0] == "<":
                         command_split[i]: bytes = STRING_TO_NONPRINTABLE[command_split[i][1:len(command_split[i])-1]]
                     elif command_split[i][0:2] == "\\x":
                         command_split[i]: bytes = bytes.fromhex(command_split[i][2:])
         command_bytes: bytes = b""
         for item in command_split:
+            print(item)
             if item:
                 command_bytes += bytes(item, "utf-8") if isinstance(item, str) else item
+        print(command_bytes)
         # Send command
         ser.write(PacketCharacter.NUL * 5 + PacketCharacter.SOH + SignType.SIGN_TYPE_ALL_VERIFY +
                   SignAddress.SIGN_ADDRESS_BROADCAST + PacketCharacter.STX + command_bytes +

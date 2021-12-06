@@ -1,7 +1,7 @@
 """
 Configurables
 """
-CLI_ALLOW_TRANSMISSION: bool = True 
+CLI_ALLOW_TRANSMISSION: bool = False
 CLI_TERMINAL_AND: str = "-"  # Animation separator
 CLI_ANIMATION_PROPERTY_SEPARATOR: str = ","  # Animation property separator
 
