@@ -264,8 +264,8 @@ class MemoryConfigurationError(Exception):
 
 if __name__ == "__main__":
     mem = Memory()
-    mem.files.append(TextFile(FileName.FILE_PRIORITY))
-    mem.files.append(DOTSFile(FileName.FILE_1, 7, 5))
+    mem.files.append(TextFile(FileName.FILE_4, True, 1000))
+    mem.files.append(DOTSFile(FileName.FILE_3, 7, 5))
     mem.files.append(StringFile(FileName.FILE_2, 0))
     print(mem.files[0].bytes())
     print(mem.files[1].bytes())

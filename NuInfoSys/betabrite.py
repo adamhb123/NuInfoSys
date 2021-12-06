@@ -293,10 +293,18 @@ class Animation:
 
     def bytes(self) -> bytes:
         """
-        Returns the bytestring representation of this Animation (along with the necessary start of mode
-        character)
+        Returns the bytestring representation of this Animation's transmission packet (along with the necessary start
+        of mode character)
         """
         return PacketCharacter.SOM + self.position + self.mode + self.color + _transcode(self.text)
+
+    def ascii(self):
+        """
+        Returns the ASCII representation of this Animation's trans (along with the necessary start of mode
+        character)
+        """
+        return PacketCharacter.SOM.decode("ascii") + self.position.decode("ascii") + self.mode.decode(
+            "ascii") + self.color.decode("ascii") + _transcode(self.text).decode("ascii")
 
 
 '''
@@ -743,7 +751,8 @@ def main() -> None:
         _transmit(_write_file(animations))
     else:
         print(f"CLI transmission is disabled...")
-        print(f"Packet: {animations}")
+        print(f"Packets (bytes): {[x.bytes() for x in animations]}")
+        print(f"Packets (ASCII): {[x.ascii() for x in animations]}")
 
 
 if __name__ == '__main__':
