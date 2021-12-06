@@ -34,6 +34,7 @@ def main():
     print(HELP_MESSAGE)
     while True:
         command: str = input(f"[RECEIVE: {receive_mode}]$ ")
+        command_bytes: bytes = b""
         # Parse setting change, could use a dict for this if more settings come up
         if "RECEIVE=" in command:
             choice: str = command.split('=')[1].lower()
@@ -47,7 +48,6 @@ def main():
                         command_split[i]: bytes = STRING_TO_NONPRINTABLE[command_split[i][1:len(command_split[i])-1]]
                     elif command_split[i][0:2] == "\\x":
                         command_split[i]: bytes = bytes.fromhex(command_split[i][2:])
-        command_bytes: bytes = b""
         for item in command_split:
             print(item)
             if item:
