@@ -57,7 +57,7 @@ def main():
                 command_bytes += bytes(item, "utf-8") if isinstance(item, str) else item
         print(command_bytes)
 
-        ":".join("{:02x}".format(ord(c)) for c in str(command_bytes))
+        print(":".join("{:02x}".format(ord(c)) for c in str(command_bytes)))
         print("TRANSMIT:" + str(PacketCharacter.NUL * 5 + PacketCharacter.SOH + SignType.SIGN_TYPE_ALL_VERIFY +
                                 SignAddress.SIGN_ADDRESS_BROADCAST + PacketCharacter.STX + command_bytes +
                                 PacketCharacter.EOT))
@@ -72,8 +72,6 @@ def main():
             if receive_mode:
                 received: bytes = ser.read_until(PacketCharacter.EOT)
                 print(f"RECEIVED FROM SIGN: {received}")
-            ser.reset_input_buffer()
-            ser.reset_output_buffer()
 
 if __name__ == "__main__":
     main()
