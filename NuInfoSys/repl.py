@@ -1,6 +1,6 @@
 import re
 from serial import Serial
-from typing import List, Union
+from typing import List, Union, Optional
 
 from NuInfoSys import config
 from NuInfoSys.framecontrolbytes import *
@@ -29,7 +29,10 @@ def main():
     """
     REPL
     """
-    ser: Serial = Serial(config.SERIAL_PORT, config.BAUD_RATE, timeout=5)
+    ser: Optional[Serial] = None
+    if config.CLI_ALLOW_TRANSMISSION:
+        ser: Serial = Serial(config.SERIAL_PORT, config.BAUD_RATE, timeout=5)
+
     receive_mode: bool = False
     print(HELP_MESSAGE)
     while True:
@@ -53,16 +56,24 @@ def main():
             if item:
                 command_bytes += bytes(item, "utf-8") if isinstance(item, str) else item
         print(command_bytes)
-        # Send command
-        ":".join("{:02x}".format(ord(c)) for c in str(command_bytes))
-        ser.write(PacketCharacter.NUL * 5 + PacketCharacter.SOH + SignType.SIGN_TYPE_ALL_VERIFY +
-                  SignAddress.SIGN_ADDRESS_BROADCAST + PacketCharacter.STX + command_bytes +
-                  PacketCharacter.EOT)
-        # Wait for response if in receive mode
-        if receive_mode:
-            received: bytes = ser.read_until(PacketCharacter.EOT)
-            print(f"RECEIVED FROM SIGN: {received}")
 
+        ":".join("{:02x}".format(ord(c)) for c in str(command_bytes))
+        print("TRANSMIT:" + str(PacketCharacter.NUL * 5 + PacketCharacter.SOH + SignType.SIGN_TYPE_ALL_VERIFY +
+                                SignAddress.SIGN_ADDRESS_BROADCAST + PacketCharacter.STX + command_bytes +
+                                PacketCharacter.EOT))
+        if ser is not None:
+            print("TRANSMIT:" + str(PacketCharacter.NUL * 5 + PacketCharacter.SOH + SignType.SIGN_TYPE_ALL_VERIFY +
+                      SignAddress.SIGN_ADDRESS_BROADCAST + PacketCharacter.STX + command_bytes +
+                      PacketCharacter.EOT))
+            ser.write(PacketCharacter.NUL * 5 + PacketCharacter.SOH + SignType.SIGN_TYPE_ALL_VERIFY +
+                      SignAddress.SIGN_ADDRESS_BROADCAST + PacketCharacter.STX + command_bytes +
+                      PacketCharacter.EOT)
+            # Wait for response if in receive mode
+            if receive_mode:
+                received: bytes = ser.read_until(PacketCharacter.EOT)
+                print(f"RECEIVED FROM SIGN: {received}")
+            ser.reset_input_buffer()
+            ser.reset_output_buffer()
 
 if __name__ == "__main__":
     main()
