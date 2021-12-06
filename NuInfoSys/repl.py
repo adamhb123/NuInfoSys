@@ -1,6 +1,6 @@
 import re
 from serial import Serial
-from typing import List
+from typing import List, Union
 
 from NuInfoSys import config
 from NuInfoSys.framecontrolbytes import *
@@ -38,15 +38,21 @@ def main():
         if "RECEIVE=" in command:
             choice: str = command.split('=')[1].lower()
             receive_mode: bool = True if choice == "true" else False
-        command_split: List[str] = re.split("(<.*?>)", command)
-        for i in range(0, len(command_split)):
-            if command_split[i][0] == "<":
-                command_split[i] = STRING_TO_NONPRINTABLE[command_split[i][1:len(command_split)-1]]
-        command: str = ''.join(command_split)
-
+        command_split: List[Union[str, bytes]] = re.split("(<.*?>)", command)
+        if len(command_split) > 1:
+            for i in range(0, len(command_split)):
+                if command_split[i]:
+                    if command_split[i][0] == "<":
+                        command_split[i]: bytes = STRING_TO_NONPRINTABLE[command_split[i][1:len(command_split[i])-1]]
+        print(command_split)
+        command_bytes: bytes = b""
+        for item in command_split:
+            if item:
+                command_bytes += bytes(item, "utf-8") if isinstance(item, str) else item
+        print(command_bytes)
         # Send command
         ser.write(PacketCharacter.NUL * 5 + PacketCharacter.SOH + SignType.SIGN_TYPE_ALL_VERIFY +
-                  SignAddress.SIGN_ADDRESS_BROADCAST + PacketCharacter.STX + bytes(command, "utf-8") +
+                  SignAddress.SIGN_ADDRESS_BROADCAST + PacketCharacter.STX + command_bytes +
                   PacketCharacter.EOT)
         # Wait for response if in receive mode
         if receive_mode:
