@@ -54,6 +54,7 @@ def main():
                 command_bytes += bytes(item, "utf-8") if isinstance(item, str) else item
         print(command_bytes)
         # Send command
+        ":".join("{:02x}".format(ord(c)) for c in str(command_bytes))
         ser.write(PacketCharacter.NUL * 5 + PacketCharacter.SOH + SignType.SIGN_TYPE_ALL_VERIFY +
                   SignAddress.SIGN_ADDRESS_BROADCAST + PacketCharacter.STX + command_bytes +
                   PacketCharacter.EOT)
