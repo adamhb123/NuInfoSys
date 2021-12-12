@@ -14,9 +14,9 @@ NuInfoSys REPL Usage:
     response from the sign after sending a command. If set to True, the
     program will wait until it receives data back from the sign OR after the
     5 second timeout duration expires.'''
-PacketCharacter.NUL * 5 + PacketCharacter.SOH + SignType.SIGN_TYPE_ALL_VERIFY +
-                      SignAddress.SIGN_ADDRESS_BROADCAST + PacketCharacter.STX + command_bytes +
-                      PacketCharacter.EOT
+#PacketCharacter.NUL * 5 + PacketCharacter.SOH + SignType.SIGN_TYPE_ALL_VERIFY +
+ #                     SignAddress.SIGN_ADDRESS_BROADCAST + PacketCharacter.STX + command_bytes +
+    #                  PacketCharacter.EOT
 STRING_TO_NONPRINTABLE = {
     "STX": PacketCharacter.STX,
     "EOT": PacketCharacter.EOT,
