@@ -8,13 +8,15 @@ from NuInfoSys.framecontrolbytes import *
 HELP_MESSAGE: str = '''WARNING: <NUL>*5 is prepended to all console commands for convenience
 NuInfoSys REPL Usage:
     [EXAMPLES]
-    $ <SOH>!00\x02E$<EOT> - clears memory
+    $ CLEARMEM = <SOH>!00\x02E$<EOT> -> clears memory
     [CONFIGURATION]
     RECEIVE={True, False} - Sets whether or not the REPL should wait for a
     response from the sign after sending a command. If set to True, the
     program will wait until it receives data back from the sign OR after the
     5 second timeout duration expires.'''
-
+PacketCharacter.NUL * 5 + PacketCharacter.SOH + SignType.SIGN_TYPE_ALL_VERIFY +
+                      SignAddress.SIGN_ADDRESS_BROADCAST + PacketCharacter.STX + command_bytes +
+                      PacketCharacter.EOT
 STRING_TO_NONPRINTABLE = {
     "STX": PacketCharacter.STX,
     "EOT": PacketCharacter.EOT,
@@ -24,6 +26,9 @@ STRING_TO_NONPRINTABLE = {
     "ETX": PacketCharacter.ETX
 }
 
+COMMAND_ALIASES = {
+    "CLEARMEM": PacketCharacter.SOH + SignType.SIGN_TYPE_ALL_VERIFY + SignAddress.SIGN_ADDRESS_BROADCAST + PacketCharacter.STX + b'E$' + PacketCharacter.EOT
+}
 
 def main():
     """
@@ -46,6 +51,9 @@ def main():
         command_split: List[Union[str, bytes]] = list(filter(None, re.split("(<.*?>)|(\\\\x.{2})", command)))
         if len(command_split):
             for i in range(0, len(command_split)):
+                if command_split[i] in COMMAND_ALIASES:
+                    command_split = [COMMAND_ALIASES[command_split[i]]]
+                    break
                 if command_split[i]:
                     if command_split[i][0] == "<":
                         command_split[i]: bytes = STRING_TO_NONPRINTABLE[command_split[i][1:len(command_split[i]) - 1]]
