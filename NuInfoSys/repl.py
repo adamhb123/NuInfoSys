@@ -1,11 +1,11 @@
 import re
 from serial import Serial
-from typing import List, Union, Optional
+from typing import List, Union, Optional, Dict
 
 from NuInfoSys import config
 from NuInfoSys.framecontrolbytes import *
 
-HELP_MESSAGE: str = '''WARNING: <NUL>*5 is prepended to all console commands for convenience
+HELP_MESSAGE: str = '''WARNING: <NUL>*5 + <SOH> + !00 (type code + sign address) is prepended, and <EOT> is appended to all console commands for convenience
 NuInfoSys REPL Usage:
     [EXAMPLES]
     $ CLEARMEM = <SOH>!00\x02E$<EOT> -> clears memory
@@ -13,11 +13,14 @@ NuInfoSys REPL Usage:
     RECEIVE={True, False} - Sets whether or not the REPL should wait for a
     response from the sign after sending a command. If set to True, the
     program will wait until it receives data back from the sign OR after the
-    5 second timeout duration expires.'''
-#PacketCharacter.NUL * 5 + PacketCharacter.SOH + SignType.SIGN_TYPE_ALL_VERIFY +
- #                     SignAddress.SIGN_ADDRESS_BROADCAST + PacketCharacter.STX + command_bytes +
-    #                  PacketCharacter.EOT
-STRING_TO_NONPRINTABLE = {
+    5 second timeout duration expires.
+    
+    <SOH>Z00<STX>E$#AL\x03\xe8FFFF"DL\x05\x074000!BL\x00\x000000<EOT> -> This appropriately sets memory!!
+    '''
+# PacketCharacter.NUL * 5 + PacketCharacter.SOH + SignType.SIGN_TYPE_ALL_VERIFY +
+#                     SignAddress.SIGN_ADDRESS_BROADCAST + PacketCharacter.STX + command_bytes +
+#                  PacketCharacter.EOT
+STRING_TO_NONPRINTABLE: Dict[str, bytes] = {
     "STX": PacketCharacter.STX,
     "EOT": PacketCharacter.EOT,
     "SOH": PacketCharacter.SOH,
@@ -29,6 +32,7 @@ STRING_TO_NONPRINTABLE = {
 COMMAND_ALIASES = {
     "CLEARMEM": PacketCharacter.SOH + SignType.SIGN_TYPE_ALL_VERIFY + SignAddress.SIGN_ADDRESS_BROADCAST + PacketCharacter.STX + b'E$' + PacketCharacter.EOT
 }
+
 
 def main():
     """
@@ -67,7 +71,8 @@ def main():
 
         print(":".join("{:02x}".format(ord(c)) for c in str(command_bytes)))
         if ser is not None:
-            packet: bytes = (PacketCharacter.NUL * 5) + command_bytes
+            packet: bytes = PacketCharacter.NUL * 5 + PacketCharacter.SOH + SignType.SIGN_TYPE_ALL_VERIFY + \
+                            SignAddress.SIGN_ADDRESS_BROADCAST + command_bytes + PacketCharacter.EOT
             ser.write(packet)
             # Wait for response if in receive mode
             if receive_mode:
