@@ -5,9 +5,10 @@ from typing import List, Union, Optional
 from NuInfoSys import config
 from NuInfoSys.framecontrolbytes import *
 
-HELP_MESSAGE: str = '''NuInfoSys REPL Usage:
+HELP_MESSAGE: str = '''WARNING: <NUL>*5 is prepended to all console commands for convenience
+NuInfoSys REPL Usage:
     [EXAMPLES]
-    $ E$ - clears memory
+    $ <SOH>!00\x02E$<EOT> - clears memory
     [CONFIGURATION]
     RECEIVE={True, False} - Sets whether or not the REPL should wait for a
     response from the sign after sending a command. If set to True, the
