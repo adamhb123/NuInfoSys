@@ -57,16 +57,9 @@ def main():
         print(command_bytes)
 
         print(":".join("{:02x}".format(ord(c)) for c in str(command_bytes)))
-        print("TRANSMIT:" + str(PacketCharacter.NUL * 5 + PacketCharacter.SOH + SignType.SIGN_TYPE_ALL_VERIFY +
-                                SignAddress.SIGN_ADDRESS_BROADCAST + PacketCharacter.STX + command_bytes +
-                                PacketCharacter.EOT))
         if ser is not None:
-            print("TRANSMIT:" + str(PacketCharacter.NUL * 5 + PacketCharacter.SOH + SignType.SIGN_TYPE_ALL_VERIFY +
-                                    SignAddress.SIGN_ADDRESS_BROADCAST + PacketCharacter.STX + command_bytes +
-                                    PacketCharacter.EOT))
-            ser.write(PacketCharacter.NUL * 5 + PacketCharacter.SOH + SignType.SIGN_TYPE_ALL_VERIFY +
-                      SignAddress.SIGN_ADDRESS_BROADCAST + PacketCharacter.STX + command_bytes +
-                      PacketCharacter.EOT)
+            packet: bytes = (PacketCharacter.NUL * 5) + command_bytes
+            ser.write(packet)
             # Wait for response if in receive mode
             if receive_mode:
                 received: bytes = ser.read_until(PacketCharacter.EOT)
