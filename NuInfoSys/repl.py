@@ -8,7 +8,7 @@ from NuInfoSys.framecontrolbytes import *
 HELP_MESSAGE: str = '''WARNING: <NUL>*5 + <SOH> + !00 (type code + sign address) + <STX> is prepended, and <EOT> is appended to all console commands for convenience
 NuInfoSys REPL Usage:
     [EXAMPLES]
-    $ CLEARMEM = \x02E$ -> clears memory
+    $ CLEARMEM = E$ -> clears memory
     
     [CONFIGURATION]
     RECEIVE={True, False} - Sets whether or not the REPL should wait for a
@@ -16,7 +16,7 @@ NuInfoSys REPL Usage:
     program will wait until it receives data back from the sign OR after the
     5 second timeout duration expires.
     
-    E$#AL\x03\xe8FFFF"DL\x05\x074000!BL\x00\x000000 -> This appropriately sets memory!!
+    E$#ALFFFF4000 -> This (should) appropriately set memory!!
     '''
 # PacketCharacter.NUL * 5 + PacketCharacter.SOH + SignType.SIGN_TYPE_ALL_VERIFY +
 #                     SignAddress.SIGN_ADDRESS_BROADCAST + PacketCharacter.STX + command_bytes +
@@ -63,7 +63,13 @@ def main():
                     if command_split[i][0] == "<":
                         command_split[i]: bytes = STRING_TO_NONPRINTABLE[command_split[i][1:len(command_split[i]) - 1]]
                     elif command_split[i][0:2] == "\\x":
-                        command_split[i]: bytes = bytes.fromhex(command_split[i][2:])
+                        print("WOWOWOW")
+                        print(command_split)
+                        print(command_split[i][2:])
+                        print(bytes.fromhex(command_split[i][2:]))
+                        command_split[i]: bytes = eval(command_split[i])
+                        #command_split[i]: bytes = bytes.fromhex(command_split[i][2:])
+
         for item in command_split:
             print(item)
             if item:
@@ -71,6 +77,7 @@ def main():
         print(command_bytes)
 
         print(":".join("{:02x}".format(ord(c)) for c in str(command_bytes)))
+        print(command_bytes)
         if ser is not None:
             packet: bytes = PacketCharacter.NUL * 5 + PacketCharacter.SOH + SignType.SIGN_TYPE_ALL_VERIFY + \
                             SignAddress.SIGN_ADDRESS_BROADCAST + PacketCharacter.STX + command_bytes + PacketCharacter.EOT
