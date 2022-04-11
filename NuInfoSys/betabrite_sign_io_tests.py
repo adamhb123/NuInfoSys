@@ -3,31 +3,33 @@ from typing import Callable, Tuple, Dict
 from inspect import getmembers, isfunction
 
 from NuInfoSys import betabrite
-from NuInfoSys import config
+##rom NuInfoSys impdort config
 from NuInfoSys.framecontrolbytes import *
 from NuInfoSys.debug import mts
 
-def _test_send_function(function: Callable, *args: Tuple[Any, ...], **kwargs: Dict[str, Any]) -> bytes:
+
+def _test_send_function(func: Callable, *args: Tuple[Any, ...], **kwargs: Dict[str, Any]) -> bytes:
     """
     Helper method for testing functions
     :param function: Callable method to be tested
     :return: Bytes sent in the packet
     """
-    mts(f"Testing function: {function.__name__}", seconds=5,  ttype=SignType.SIGN_TYPE_BETABRITE)
-    result = function(*args, **kwargs)
+    mts(f"Testing function: {func.__name__}", seconds=5, ttype=SignType.SIGN_TYPE_BETABRITE)
+    result: Any = func(*args, **kwargs)
     # Should see some visual confirmation
     print(f"\tSent packet: {result}")
     return result
 
-def _test_read_function(function: Callable, *args: Tuple[Any, ...], **kwargs: Dict[str, Any]) -> Any:
+
+def _test_read_function(func: Callable, *args: Tuple[Any, ...], **kwargs: Dict[str, Any]) -> Any:
     """
     Helper method for testing functions
     :param function: Callable method to be tested
     :return: None
     """
-    mts(f"Testing function: {function.__name__}", seconds=5,  ttype=SignType.SIGN_TYPE_BETABRITE)
-    result = function(*args, **kwargs)
-    mts(f"Received: {result}", seconds=5,  ttype=SignType.SIGN_TYPE_ALL_VERIFY)
+    mts(f"Testing function: {func.__name__}", seconds=5, ttype=SignType.SIGN_TYPE_BETABRITE)
+    result = func(*args, **kwargs)
+    mts(f"Received: {result}", seconds=5, ttype=SignType.SIGN_TYPE_ALL_VERIFY)
     return result
 
 
@@ -191,13 +193,15 @@ def test_read_temperature_offset() -> None:
     """
     _test_read_function(betabrite.read_temperature_offset)
 
+
 def run_all_send_tests() -> None:
     """
     Runs all betabrite sign send IO tests
     :return: None
     """
     mts("Testing send methods")
-    [x[1]() for x in getmembers(sys.modules[__name__], lambda x: isfunction(x) and "test_send" in x.__name__ and "_" != x.__name__[0])]
+    [x[1]() for x in
+     getmembers(sys.modules[__name__], lambda x: isfunction(x) and "test_send" in x.__name__ and "_" != x.__name__[0])]
 
 
 def run_all_read_tests() -> None:
@@ -206,7 +210,9 @@ def run_all_read_tests() -> None:
     :return: None
     """
     mts("Testing read methods")
-    [x[1]() for x in getmembers(sys.modules[__name__], lambda x: isfunction(x) and "test_read" in x.__name__ and "_" != x.__name__[0])]
+    [x[1]() for x in
+     getmembers(sys.modules[__name__], lambda x: isfunction(x) and "test_read" in x.__name__ and "_" != x.__name__[0])]
+
 
 def run_all_tests() -> None:
     """
@@ -215,6 +221,7 @@ def run_all_tests() -> None:
     """
     run_all_send_tests()
     run_all_read_tests()
+
 
 def main() -> None:
     """
@@ -233,7 +240,8 @@ def main() -> None:
         [x[1]() for x in getmembers(sys.modules[__name__], lambda x: isfunction(x) and tests_to_run == x.__name__)]
     mts("Testing complete")
     """
-    run_all_tests()
+    run_all_read_tests()
+
+
 if __name__ == "__main__":
     main()
-

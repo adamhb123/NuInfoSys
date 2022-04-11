@@ -346,7 +346,7 @@ def _transmit_multi(payloads: List[bytes], addr: bytes = SignAddress.SIGN_ADDRES
     ser: Serial = Serial(config.SERIAL_PORT, config.BAUD_RATE, timeout=10)
     # Initial wakeup
     # final_packet only exists here so that we can return what we've sent to serial
-    final_packet = PacketCharacter.WAKEUP + PacketCharacter.SOH + ttype + addr
+    final_packet: bytes = PacketCharacter.WAKEUP + PacketCharacter.SOH + ttype + addr
     ser.write(final_packet)
     for payload in payloads:
         ser.write(PacketCharacter.STX)
@@ -469,7 +469,7 @@ def send_dots(dots_data: bytes, width: Optional[Union[int, bytes]] = None,
     if isinstance(height, int):
         height: bytes = height.to_bytes(1, "big")
     dots_data.replace(b"\r", TextCharacter.CR)
-    packet = CommandCode.COMMAND_WRITE_DOTS + file + height + width + dots_data
+    packet: bytes = CommandCode.COMMAND_WRITE_DOTS + file + height + width + dots_data
     return _transmit(packet)
 
 
@@ -480,7 +480,7 @@ def send_time() -> bytes:
 
     :return: Bytes sent in packet
     """
-    packet = CommandCode.COMMAND_WRITE_SPECIAL + WriteSpecialFunctionsLabel.SET_TIME_OF_DAY + bytes(
+    packet: bytes = CommandCode.COMMAND_WRITE_SPECIAL + WriteSpecialFunctionsLabel.SET_TIME_OF_DAY + bytes(
         datetime.now().strftime("%H%M"), 'utf-8')
 
     return _transmit(packet)
@@ -493,7 +493,7 @@ def send_soft_reset() -> bytes:
 
     :return: Bytes sent in packet
     """
-    packet = CommandCode.COMMAND_WRITE_SPECIAL + WriteSpecialFunctionsLabel.SOFT_RESET
+    packet: bytes = CommandCode.COMMAND_WRITE_SPECIAL + WriteSpecialFunctionsLabel.SOFT_RESET
 
     return _transmit(packet)
 
@@ -518,7 +518,7 @@ def send_set_large_dots_picture_memory_configuration_single(filename: Union[str,
     if isinstance(height, int):
         height: bytes = height.to_bytes(2, 'big')
 
-    packet = CommandCode.COMMAND_WRITE_SPECIAL + WriteSpecialFunctionsLabel.SET_LARGE_DOTS_PICTURE_MEMORY_CONFIGURATION + filename + height + width + b"0000"
+    packet: bytes = CommandCode.COMMAND_WRITE_SPECIAL + WriteSpecialFunctionsLabel.SET_LARGE_DOTS_PICTURE_MEMORY_CONFIGURATION + filename + height + width + b"0000"
     return _transmit(packet)
 
 
@@ -549,7 +549,7 @@ def send_animations(animations: Union[Animation, List[Animation]], file: bytes =
     """
     #   If you want to send just one animation, you can use its 'display()' method
     # _transmit(config.SERIAL_PORT, _write_file(animations, file=FILE_NORMAL_RANGE[0]))
-    packet = _write_file(animations, file=file)
+    packet: bytes = _write_file(animations, file=file)
     return _transmit(packet, addr=addr, ttype=ttype)
 
 

@@ -30,12 +30,12 @@ STRING_TO_NONPRINTABLE: Dict[str, bytes] = {
     "ETX": PacketCharacter.ETX
 }
 
-COMMAND_ALIASES = {
+COMMAND_ALIASES: Dict[str, bytes] = {
     "CLEARMEM": PacketCharacter.SOH + SignType.SIGN_TYPE_ALL_VERIFY + SignAddress.SIGN_ADDRESS_BROADCAST + PacketCharacter.STX + b'E$' + PacketCharacter.EOT
 }
 
 
-def main():
+def main() -> None:
     """
     REPL
     """
@@ -57,18 +57,13 @@ def main():
         if len(command_split):
             for i in range(0, len(command_split)):
                 if command_split[i] in COMMAND_ALIASES:
-                    command_split = [COMMAND_ALIASES[command_split[i]]]
+                    command_split: List[Union[str,bytes]] = [COMMAND_ALIASES[command_split[i]]]
                     break
                 if command_split[i]:
                     if command_split[i][0] == "<":
                         command_split[i]: bytes = STRING_TO_NONPRINTABLE[command_split[i][1:len(command_split[i]) - 1]]
                     elif command_split[i][0:2] == "\\x":
-                        print("WOWOWOW")
-                        print(command_split)
-                        print(command_split[i][2:])
-                        print(bytes.fromhex(command_split[i][2:]))
                         command_split[i]: bytes = eval(command_split[i])
-                        #command_split[i]: bytes = bytes.fromhex(command_split[i][2:])
 
         for item in command_split:
             print(item)

@@ -1,7 +1,7 @@
 import betabrite
 
 
-def test_animation_class():
+def test_animation_class() -> None:
     """
     Tests for the animation class
     """
@@ -18,7 +18,7 @@ def test_animation_class():
                                                    betabrite.TextMode.AUTO) == betabrite.TextMode.ANIMAL
     #
     # 2.0 Test animation.generate_random(), which in turn tests animation.randomize()
-    animation = betabrite.Animation.generate_random()
+    animation: betabrite.Animation = betabrite.Animation.generate_random()
     assert animation.text == "Random animation"
     assert animation.mode in betabrite.ANIMATION_MODE_DICT.values()
     assert animation.color in betabrite.ANIMATION_COLOR_DICT.values()
